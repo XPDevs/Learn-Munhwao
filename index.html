@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Munhwao Mastery - Learn North Korean Standard</title>
+<meta name="description" content="Learn Munhwao (North Korean) Korean offline: 140 lessons, flashcards, grammar, conjugations and more.">
+<meta name="theme-color" content="#58cc02">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== TOP BAR ===== -->
+<header class="topbar">
+  <div class="logo">Munhwao<span class="logo-sub">MASTERY</span></div>
+  <div class="stats">
+    <div class="stat-chip streak">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 0.67s0.74 2.65 0.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l0.03-0.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5 0.67z"/></svg>
+      <span id="stat-streak">1</span>
+    </div>
+    <div class="stat-chip xp">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1.5 L16.5 5 L22 3.5 L20.5 9 L24 12 L20.5 15 L22 20.5 L16.5 19 L12 22.5 L7.5 19 L2 20.5 L3.5 15 L0 12 L3.5 9 L2 3.5 L7.5 5 Z"/></svg>
+      <span id="stat-xp">0</span>
+    </div>
+    <div class="stat-chip hearts">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41 0.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      <span id="stat-hearts">5</span>
+    </div>
+    <div class="nav-links" id="desktop-nav">
+      <button class="nav-link active" data-page="learn">Learn</button>
+      <button class="nav-link" data-page="tools">Tools</button>
+      <button class="nav-link" data-page="profile">Profile</button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== LEARN PAGE ===== -->
+<main id="page-learn" class="page active">
+  <div class="banner" id="learn-banner"></div>
+  <div class="placement-box" id="placement-box">
+    <p>Not sure where to start? Take the placement test.</p>
+    <button class="lesson-btn ghost" id="banner-placement">Take the Placement Test</button>
+  </div>
+  <div id="skill-tree"></div>
+</main>
+
+<!-- ===== TOOLS PAGE ===== -->
+<main id="page-tools" class="page">
+  <div class="page-heading"><h1>Tools &amp; Reference</h1><p>Practice anything: flashcards, grammar, verb conjugations, numbers, Hangul and writing.</p></div>
+  <div id="tools-content"></div>
+</main>
+
+<!-- ===== PROFILE PAGE ===== -->
+<main id="page-profile" class="page">
+  <div class="page-heading"><h1>Profile &amp; Progress</h1><p>Your XP, streak and spaced-repetition health.</p></div>
+  <div class="profile-grid" id="profile-grid"></div>
+</main>
+
+<!-- ===== LESSON / PLACEMENT / MODAL ===== -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="lesson-topbar" id="modal-topbar"></div>
+    <div class="lesson-body" id="modal-body"></div>
+    <div class="lesson-footer" id="modal-footer"></div>
+  </div>
+</div>
+
+<!-- ===== CONFIRM MODAL ===== -->
+<div class="modal-overlay" id="modal-confirm">
+  <div class="modal" style="max-width:430px;height:auto;margin:auto;border-radius:16px;border:2px solid var(--border);box-shadow:0 8px 30px rgba(0,0,0,0.15);">
+    <div class="lesson-body" id="confirm-body" style="min-height:auto;text-align:center;"></div>
+    <div class="lesson-footer" id="confirm-footer" style="justify-content:center;"></div>
+  </div>
+</div>
+
+<!-- ===== BOTTOM NAV ===== -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="bn-btn active" data-page="learn"><span class="bn-dot"></span>Learn</button>
+  <button class="bn-btn" data-page="tools"><span class="bn-dot"></span>Tools</button>
+  <button class="bn-btn" data-page="profile"><span class="bn-dot"></span>Profile</button>
+</nav><script src="https://xpdevs.github.io/Learn-Munhwao/data/hangeul.js"></script>
+<script src="https://xpdevs.github.io/Learn-Munhwao/data/vocab.js"></script>
+<script src="https://xpdevs.github.io/Learn-Munhwao/data/lessons.js"></script>
+<script src="https://xpdevs.github.io/Learn-Munhwao/data/grammar.js"></script>
+<script src="https://xpdevs.github.io/Learn-Munhwao/data/placement.js"></script>
+<script src="https://xpdevs.github.io/Learn-Munhwao/audio/manifest.js"></script><script>
+"use strict";
+const BASE_URL = "https://xpdevs.github.io/Learn-Munhwao/";
+/* =====================================================================
+   Munhwao Mastery - engine for the 140-lesson / 20-tier course.
+   Strict linguistic purity: North Korean Standard (Munhwao) only.
+   Loads data from hangeul.js, vocab.js, lessons.js, grammar.js and
+   placement.js (plain script tags so the app runs from file:// too).
+   ===================================================================== */
+
+/* ---------- Deterministic RNG for reproducible exercises ---------- */
+let seedState = 42;
+function srand() { seedState = (seedState * 1103515245 + 12345) & 0x7fffffff; return seedState / 0x7fffffff; }
+function shuffle(arr) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(srand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function pick(arr) { return arr[Math.floor(srand() * arr.length)]; }
+function sample(arr, n) { const a = shuffle(arr); return n >= a.length ? a : a.slice(0, n); }
+function randInt(min, max) { return min + Math.floor(srand() * (max - min + 1)); }
+
+/* =====================================================================
+   APP STATE (localStorage, versioned key)
+   ===================================================================== */
+const DEFAULT_STATE = {
+  xp: 0,
+  streak: 0,
+  lastActiveDay: null,
+  hearts: 5,
+  maxHearts: 5,
+  lessonCompletion: {},   // id -> {stars, xp, date}
+  wordMastery: {},        // key -> 0..5
+  srs: {},                // key -> {due, ease, interval, reps, lapses}
+  placement: null,        // {score, max, tier, lesson}
+  totalCorrect: 0,
+  totalSeen: 0,
+  dayXp: 0,
+  settings: { tts: true, rate: 0.85, dark: false }
+};
+const STATE_KEY = "munhwao_mastery_v2";
+
+let state = loadState();
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STATE_KEY);
+    if (raw) return Object.assign({}, DEFAULT_STATE, JSON.parse(raw));
+  } catch (e) {}
+  return Object.assign({}, DEFAULT_STATE);
+}
+function saveState() { try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch (e) {} }
+
+function applyTheme() {
+  if (state.settings && state.settings.dark) document.documentElement.setAttribute("data-theme", "dark");
+  else document.documentElement.removeAttribute("data-theme");
+}
+
+function todayKey() { return new Date().toDateString(); }
+function touchStreak() {
+  const today = todayKey();
+  if (state.lastActiveDay === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  state.streak = state.lastActiveDay === yesterday ? state.streak + 1 : 1;
+  state.lastActiveDay = today;
+  state.dayXp = 0;
+  if (state.todayGainedXp) state.dayXp = (state.dayXp || 0) + 0;
+  saveState();
+}
+function addXp(n) {
+  state.xp += n;
+  state.dayXp = (state.dayXp || 0) + n;
+  saveState();
+}
+
+/* ---------- Audio: pre-generated MP3 cache with browser-TTS fallback ----------
+   Every Hangul string is voiced from app/audio/ via manifest.js (built by
+   build-audio.js). Number readings are voiced token-by-token (only the number
+   words are stored, e.g. 만 + 이 + 천 + 삼 + 백...). Anything not in the cache
+   falls back to the browser's Web Speech API. */
+function ttsSupported() { return typeof speechSynthesis !== "undefined" && typeof SpeechSynthesisUtterance !== "undefined"; }
+
+const NUM_TOKEN_LONG = ["아흔", "스물", "서른", "마흔", "쉰", "예순", "일흔", "여든", "하나", "둘", "셋", "넷", "다섯", "여섯", "일곱", "여덟", "아홉", "열", "령", "만", "천", "백", "십", "일", "이", "삼", "사", "오", "륙", "칠", "팔", "구", "영"]
+  .sort(function (a, b) { return b.length - a.length; });
+
+function splitNumberTokens(text) {
+  if (!text) return null;
+  const out = [];
+  let pos = 0;
+  while (pos < text.length) {
+    let best = null;
+    for (let i = 0; i < NUM_TOKEN_LONG.length; i++) {
+      if (text.indexOf(NUM_TOKEN_LONG[i], pos) === pos) { best = NUM_TOKEN_LONG[i]; break; }
+    }
+    if (!best) return null;
+    out.push(best);
+    pos += best.length;
+  }
+  return out.length > 1 ? out : null;
+}
+
+function audioPathsFor(text) {
+  if (!window.MH_AUDIO) return null;
+  const one = window.MH_AUDIO[text];
+  if (one) return [BASE_URL + "audio/" + one];
+  const toks = splitNumberTokens(text);
+  if (toks) {
+    const urls = [];
+    for (let i = 0; i < toks.length; i++) {
+      const f = window.MH_AUDIO[toks[i]];
+      if (!f) return null;
+      urls.push(BASE_URL + "audio/" + f);
+    }
+    return urls;
+  }
+  return null;
+}
+
+let audioEl = null, audioQ = [], audioBusy = false, audioUnfrozen = false;
+function ensureAudio() {
+  if (!audioEl) {
+    audioEl = new Audio();
+    audioEl.preload = "auto";
+    audioEl.addEventListener("ended", audioNext);
+    audioEl.addEventListener("error", audioNext);
+  }
+  return audioEl;
+}
+function audioNext() {
+  if (audioQ.length) {
+    const src = audioQ.shift();
+    try {
+      audioEl.src = src;
+      const p = audioEl.play();
+      if (p && typeof p.catch === "function") p.catch(function (err) {
+        if (err && /interact|NotAllowed/i.test(String(err))) audioUnlockPrompt(src);
+        audioNext();
+      });
+    } catch (e) { audioNext(); }
+  } else { audioBusy = false; }
+}
+function playAudioUrls(urls) {
+  if (!urls || !urls.length) return;
+  ensureAudio();
+  for (let i = 0; i < urls.length; i++) audioQ.push(urls[i]);
+  if (!audioBusy) { audioBusy = true; audioNext(); }
+}
+function audioUnlockPrompt(src) {
+  if (audioUnfrozen) return;
+  audioUnfrozen = true;
+  toast("Tap anywhere to enable sound");
+  const once = function () {
+    document.removeEventListener("pointerdown", once);
+    audioQ.unshift(src);
+    audioBusy = true;
+    audioNext();
+  };
+  document.addEventListener("pointerdown", once);
+}
+
+function speak(text, rate) {
+  if (!text) return;
+  if (!hasHangul(text)) return;
+  if (!ttsSupported() || state.settings.tts === false) return;
+  const urls = audioPathsFor(text);
+  if (urls) { playAudioUrls(urls); return; }
+  try {
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "ko-KR";
+    u.rate = typeof rate === "number" ? rate : (state.settings.rate || 0.85);
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+function makeSpeaker(text, size) {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "speaker-btn";
+  b.style.width = size || "";
+  b.style.height = size || "";
+  b.textContent = "SP";
+  b.title = "Listen (Munhwao pronunciation)";
+  b.addEventListener("click", function (ev) { ev.stopPropagation(); speak(text); });
+  return b;
+}
+
+/* ---------- Virtual Hangul keyboard (Dubeolsik) ---------- */
+let kbdTarget = null;          // input/textarea element that receives jamo
+let kbdOnKey = null;           // optional callback(ch)
+let kbdComposed = false;       // show composed result instead of raw jamo
+
+function kbdKeyLabel(k) {
+  const map = { "ㅂ":"ㅂ b/p","ㅈ":"ㅈ j","ㄷ":"ㄷ d","ㄱ":"ㄱ g","ㅅ":"ㅅ s","ㅁ":"ㅁ m","ㄴ":"ㄴ n",
+    "ㅇ":"ㅇ o","ㄹ":"ㄹ r","ㅎ":"ㅎ h","ㅋ":"ㅋ k","ㅌ":"ㅌ t","ㅊ":"ㅊ ch","ㅍ":"ㅍ p",
+    "ㅏ":"ㅏ a","ㅑ":"ㅑ ya","ㅓ":"ㅓ eo","ㅕ":"ㅕ yeo","ㅗ":"ㅗ o","ㅛ":"ㅛ yo","ㅜ":"ㅜ u",
+    "ㅠ":"ㅠ yu","ㅡ":"ㅡ eu","ㅣ":"ㅣ i","ㅐ":"ㅐ ae","ㅔ":"ㅔ e" };
+  return map[k] || k;
+}
+
+function buildKeyboard(container, opts) {
+  opts = opts || {};
+  kbdTarget = opts.target || null;
+  kbdOnKey = opts.onKey || null;
+  kbdComposed = !!opts.composed;
+  const rows = MH.KEYBOARD_ROWS;
+  let html = '<div class="kbd" id="kbd">';
+  rows.forEach(function (row, ri) {
+    html += '<div class="kbd-row">';
+    if (ri === 0) html += '<button type="button" class="kbd-key special" data-act="shift">&nbsp;</button>';
+    if (ri === 1) html += '<button type="button" class="kbd-key special" data-act="clear">CLR</button>';
+    row.forEach(function (k) {
+      html += '<button type="button" class="kbd-key" data-jamo="' + k.j + '">' + kbdKeyLabel(k.j) + '</button>';
+    });
+    if (ri === 0) html += '<button type="button" class="kbd-key special" data-act="back">&lt;</button>';
+    if (ri === 2) html += '<button type="button" class="kbd-key special" data-act="space">SPACE</button>';
+    html += '</div>';
+  });
+  html += '</div>';
+  container.insertAdjacentHTML("beforeend", html);
+
+  const kbd = document.getElementById("kbd");
+  kbd.addEventListener("click", function (ev) {
+    const btn = ev.target.closest("button.kbd-key");
+    if (!btn) return;
+    const act = btn.dataset.act, jamo = btn.dataset.jamo;
+    if (act === "shift") { shiftKeyboard(kbd); return; }
+    if (act === "clear") { insertJamo(""); return; }
+    if (act === "back") { jamoBackspace(); return; }
+    if (act === "space") { insertJamo(" "); return; }
+    insertJamo(jamo);
+  });
+}
+
+function shiftKeyboard(kbd) {
+  const shifted = !kbd.classList.toggle("shifted");
+  const rows = MH.KEYBOARD_ROWS;
+  const all = kbd.querySelectorAll('.kbd-key[data-jamo]');
+  let list = [];
+  rows.forEach(function (r) { r.forEach(function (k) { list.push(k); }); });
+  all.forEach(function (el, i) {
+    const k = list[i];
+    if (!k) return;
+    const doubled = { "ㄱ":"ㄲ","ㄷ":"ㄸ","ㅂ":"ㅃ","ㅅ":"ㅆ","ㅈ":"ㅉ" };
+    const j = shifted && doubled[k.j] ? doubled[k.j] : k.j;
+    el.dataset.jamo = j;
+    el.textContent = kbdKeyLabel(j) + (j !== k.j ? "!" : "");
+  });
+  if (!shifted) return;
+  const ten = MH.DUBEOLSIK;
+  Object.keys(ten).forEach(function (q) { if (q === q.toLowerCase()) { delete ten[q]; } });
+}
+
+function jamoBackspace() {
+  const t = kbdTarget;
+  if (t && document.activeElement !== t) return;
+  if (t) {
+    const v = t.value;
+    if (v.slice(-1) === " ") { t.value = v.slice(0, -1); }
+    else {
+      // remove last composed syllable if present, else last char
+      t.value = v.slice(0, -1);
+    }
+    t.dispatchEvent(new Event("input"));
+  } else if (kbdOnKey) kbdOnKey("\u232B");
+}
+
+function insertJamo(ch) {
+  if (kbdOnKey) { kbdOnKey(ch); return; }
+  const t = kbdTarget;
+  if (!t) return;
+  const start = t.selectionStart == null ? t.value.length : t.selectionStart;
+  const end = t.selectionEnd == null ? start : t.selectionEnd;
+  if (ch === "") { t.value = ""; }
+  else { t.value = t.value.slice(0, start) + ch + t.value.slice(end); }
+  const pos = (ch === "" ? 0 : start + (ch === " " ? 1 : 1)) + (ch === " " ? 0 : 0);
+  t.setSelectionRange(pos, pos);
+  t.dispatchEvent(new Event("input"));
+  t.focus();
+}
+
+/* physical QWERTY -> jamo mapping via dubeolsik + auto-compose */
+function toHangul(raw) {
+  return MH.normaliseInput(raw);
+}
+function keyToJamo(e) {
+  const code = e.key || String.fromCharCode(e.keyCode);
+  if (code.length !== 1) return "";
+  const base = code.toLowerCase();
+  return MH.DUBEOLSIK[base] || "";
+}
+
+/* =====================================================================
+   DOM HELPERS
+   ===================================================================== */
+function el(id) { return document.getElementById(id); }
+function toast(msg) {
+  const old = document.querySelector(".toast");
+  if (old) old.remove();
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function () { t.remove(); }, 2400);
+}
+function openModal() { el("modal").classList.add("active"); }
+function closeModal() {
+  el("modal").classList.remove("active");
+  if (typeof stopAnySpeech === "function") stopAnySpeech();
+  renderBanner();
+}
+function setTopbar(html) { el("modal-topbar").innerHTML = html; }
+function setBody(html) { el("modal-body").innerHTML = html; }
+function setFooter(html) { el("modal-footer").innerHTML = html; }
+function hideFooter() { el("modal-footer").innerHTML = ""; }
+function showFooter() { el("modal-footer").innerHTML = '<button class="lesson-btn continue" data-act="stay"></button>'; }
+
+/* confirm modal */
+function confirmBox(title, sub, btnLabel, onOk) {
+  el("confirm-body").innerHTML = "<h2 style=\"font-weight:900;margin-bottom:8px;\">" + title + "</h2><p style='color:var(--text-dim);line-height:1.5;'>" + sub + "</p>";
+  el("confirm-footer").innerHTML = '<button class="lesson-btn continue" id="confirm-ok">' + btnLabel + "</button>";
+  el("modal-confirm").classList.add("active");
+  el("confirm-ok").addEventListener("click", function () {
+    el("modal-confirm").classList.remove("active");
+    if (onOk) onOk();
+  });
+}
+
+/* =====================================================================
+   NAVIGATION
+   ===================================================================== */
+const NAV_PAGES = ["learn", "tools", "profile"];
+function showPage(name) {
+  NAV_PAGES.forEach(function (p) { el("page-" + p).classList.toggle("active", p === name); });
+  document.querySelectorAll(".nav-link").forEach(function (b) { b.classList.toggle("active", b.dataset.page === name); });
+  document.querySelectorAll(".bn-btn").forEach(function (b) { b.classList.toggle("active", b.dataset.page === name); });
+  if (name === "learn") renderTree();
+  if (name === "tools") renderTools();
+  if (name === "profile") renderProfile();
+  window.scrollTo(0, 0);
+}
+function bindNav() {
+  document.querySelectorAll(".nav-link, .bn-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () { showPage(btn.dataset.page); });
+  });
+  el("banner-placement").addEventListener("click", function () { startPlacement(); });
+}
+
+/* =====================================================================
+   SRS (SM-2 inspired)
+   ===================================================================== */
+function srsGet(key) {
+  return state.srs[key] || { due: 0, ease: 2.5, interval: 1, reps: 0, lapses: 0 };
+}
+function srsReview(key, quality, noSave) {
+  const cur = srsGet(key);
+  let ease = cur.ease, interval = cur.interval, reps = cur.reps;
+  if (quality < 3) {
+    reps = 0; interval = 1; ease = Math.max(1.3, ease - 0.2); cur.lapses++;
+  } else {
+    reps++;
+    if (reps === 1) interval = 1;
+    else if (reps === 2) interval = 3;
+    else interval = Math.round(interval * ease);
+    ease = Math.min(2.8, ease + (quality >= 4 ? 0.1 : 0));
+    if (ease < 1.3) ease = 1.3;
+  }
+  const due = Math.round(Date.now() / 1000) + interval * 86400;
+  state.srs[key] = { due: due, ease: +ease.toFixed(2), interval: interval, reps: reps, lapses: cur.lapses };
+  let m = state.wordMastery[key] || 0;
+  if (quality < 3) m = Math.max(0, m - 1);
+  else m = Math.min(5, m + (quality >= 4 ? 2 : 1));
+  state.wordMastery[key] = m;
+  if (!noSave) saveState();
+}
+function dueReviewCount() {
+  const now = Math.round(Date.now() / 1000);
+  return Object.keys(state.srs).filter(function (k) { return state.srs[k].due <= now; }).length;
+}/* =====================================================================
+   NUMBER WORDS (Munhwao) - used by drills, number drills and tools.
+   Native below 100, Sino for 100+ and money, North spellings (령, 륙, 려).
+   ===================================================================== */
+MH.NATIVE_UNITS = ["", "하나", "둘", "셋", "넷", "다섯", "여섯", "일곱", "여덟", "아홉"];
+MH.NATIVE_TENS = ["", "열", "스물", "서른", "마흔", "쉰", "예순", "일흔", "여든", "아흔"];
+MH.NATIVE_UNITS_PHON = ["", "ha-na", "dul", "set", "net", "da-seot", "yeo-seot", "il-gop", "yeo-deol", "a-hop"];
+MH.NATIVE_TENS_PHON = ["", "yeol", "seu-mul", "seo-reun", "ma-heun", "swin", "ye-sun", "il-heun", "yeo-deun", "a-heun"];
+MH.SINO_UNITS = ["령", "일", "이", "삼", "사", "오", "륙", "칠", "팔", "구"];
+MH.SINO_UNITS_PHON = ["ryeong", "il", "i", "sam", "sa", "o", "ryuk", "chil", "pal", "gu"];
+MH.SINO_TURS_PHON = ["", "sip", "i-sip", "sam-sip", "sa-sip", "o-sip", "ryuk-sip", "chil-sip", "pal-sip", "gu-sip"];
+
+MH.nativeNum = function (n) {
+  n = Math.floor(n);
+  if (n < 0 || isNaN(n)) return "";
+  if (n === 0) return "령";
+  if (n < 10) return MH.NATIVE_UNITS[n];
+  if (n < 100) return MH.NATIVE_TENS[Math.floor(n / 10)] + MH.NATIVE_UNITS[n % 10];
+  return MH.sinoNum(n);   // hundreds and up use Sino words
+};
+MH.nativeNumPhon = function (n) {
+  n = Math.floor(n);
+  if (n < 0 || isNaN(n)) return "";
+  if (n === 0) return "ryeong";
+  if (n < 10) return MH.NATIVE_UNITS_PHON[n];
+  if (n < 100) {
+    var a = MH.NATIVE_TENS_PHON[Math.floor(n / 10)], b = MH.NATIVE_UNITS_PHON[n % 10];
+    return a + (b ? "-" + b : "");
+  }
+  return MH.sinoNumPhon(n);
+};
+
+MH.sinoNum = function (n) {
+  n = Math.floor(n);
+  if (n < 0 || isNaN(n)) return "";
+  if (n === 0) return "령";
+  if (n === 10000) return "만";
+  var s = "", man = Math.floor(n / 10000), rem = n % 10000;
+  if (man) s += (man > 1 ? MH.sinoNumBits(man) : "") + "만";
+  if (rem) s += MH.sinoNumBits(rem);
+  return s;
+};
+MH.sinoNumBits = function (n) {
+  if (n === 0) return "";
+  var out = "";
+  var c = Math.floor(n / 1000); if (c) { out += (c > 1 ? MH.SINO_UNITS[c] : "") + "천"; n %= 1000; }
+  var b = Math.floor(n / 100);  if (b) { out += (b > 1 ? MH.SINO_UNITS[b] : "") + "백"; n %= 100; }
+  var t = Math.floor(n / 10);   if (t) { out += (t > 1 ? MH.SINO_UNITS[t] : "") + "십"; n %= 10; }
+  if (n) out += MH.SINO_UNITS[n];
+  return out;
+};
+MH.sinoNumPhon = function (n) {
+  n = Math.floor(n);
+  if (n < 0 || isNaN(n)) return "";
+  if (n === 0) return "ryeong";
+  if (n === 10000) return "man";
+  var man = Math.floor(n / 10000), rem = n % 10000;
+  var out = "";
+  if (man) out += (man > 1 ? MH.sinoNumBitsPhon(man) : "") + "man";
+  if (rem) out += MH.sinoNumBitsPhon(rem);
+  return out;
+};
+MH.sinoNumBitsPhon = function (n) {
+  if (n === 0) return "";
+  var out = "";
+  var c = Math.floor(n / 1000); if (c) { out += (c > 1 ? MH.SINO_UNITS_PHON[c] : "") + "cheon"; n %= 1000; }
+  var b = Math.floor(n / 100);  if (b) { out += (b > 1 ? MH.SINO_UNITS_PHON[b] : "") + "baek"; n %= 100; }
+  var t = Math.floor(n / 10);   if (t) { out += MH.SINO_TURS_PHON[t]; n %= 10; }
+  if (n) out += (out ? "-" : "") + MH.SINO_UNITS_PHON[n];
+  return out;
+};
+
+/* number -> Arabic with thousands separators for the money drills */
+function prettyNum(n) { return String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ","); }
+
+/* =====================================================================
+   DRILL GENERATORS
+   Builds one exercise object:
+     { kind, prompt, qHtml, correct, options?, why, key, phon, card? }
+   ===================================================================== */
+function lessonCards(lesson) {
+  const out = [], seen = {};
+  (lesson.learn || []).concat(lesson.learnExtra || []).forEach(function (c) {
+    const id = c.k || c.h;
+    if (!seen[id]) { seen[id] = true; out.push(c); }
+  });
+  return out.length ? out : lesson.learn;
+}
+
+function allVocabCards() {
+  return MH.VOCAB_KEYS.map(function (k) { return MH.VOCAB[k]; }).filter(function (v) { return v && v.h && v.e; });
+}
+
+/* english distractors for a correct English meaning */
+function enOptions(correct, pool, n, correctText) {
+  const opts = [{ text: correctText, ok: true }];
+  const used = {};
+  used[correctText] = true;
+  let tries = 0;
+  while (opts.length < n && tries < 80) {
+    tries++;
+    const v = pick(pool);
+    if (!v || !v.e || used[v.e]) continue;
+    used[v.e] = true;
+    opts.push({ text: v.e, ok: false });
+  }
+  return shuffle(opts).slice(0, n);
+}
+
+/* hangul distractors for a correct hangul word */
+function koOptions(correct, pool, n, correctText) {
+  const opts = [{ text: correctText, ok: true }];
+  const used = {};
+  used[correctText] = true;
+  let tries = 0;
+  while (opts.length < n && tries < 80) {
+    tries++;
+    const v = pick(pool);
+    if (!v || !v.h || used[v.h]) continue;
+    used[v.h] = true;
+    opts.push({ text: v.h, ok: false });
+  }
+  return shuffle(opts).slice(0, n);
+}
+
+function whyFor(card) {
+  if (card) {
+    let w = "";
+    if (card.e) w += "Munhwao word: " + card.h + " (" + card.e + ").";
+    if (card.n) w = w + " " + card.n;
+    if (card.s) w += " Example: " + card.s;
+    return w;
+  }
+  return "";
+}
+
+function makeDrill(type, cards, lesson) {
+  const pool = cards.length >= 4 ? cards : allVocabCards();
+  const card = pick(cards);
+  if (!card) return null;
+  const key = card.k || (lesson.id + ":" + card.h);
+  const why = whyFor(card);
+
+  if (type === "mc" || type === "pick") {
+    // mc: English -> Hangul. pick: Hangul -> English.
+    if (type === "mc") {
+      const opts = koOptions(card, pool, 4, card.h);
+      return {
+        kind: "choices", key: key, why: why, phon: card.p,
+        prompt: "Select the Munhwao word",
+        q: card.e,
+        qHangul: false,
+        ops: opts, opAttr: "h"
+      };
+    }
+    const opts = enOptions(card, pool, 4, card.e);
+    return {
+      kind: "choices", key: key, why: why, phon: card.p,
+      prompt: "What is the meaning?",
+      q: card.h, qPhon: card.p, qHangul: true,
+      ops: opts, opAttr: "e"
+    };
+  }
+
+  if (type === "read") {
+    const opts = enOptions(card, pool, 4, card.e);
+    return {
+      kind: "choices", key: key, why: why, phon: card.p,
+      prompt: "Read it, then choose the meaning",
+      q: card.h, qPhon: card.p, qHangul: true,
+      ops: opts, opAttr: "e"
+    };
+  }
+
+  if (type === "listen") {
+    const opts = enOptions(card, pool, 4, card.e);
+    return {
+      kind: "listen", key: key, why: why, phon: card.p,
+      prompt: "Listen, then choose the meaning",
+      q: card.h, qPhon: card.p,
+      ops: opts, opAttr: "e", speak: card.h
+    };
+  }
+
+  if (type === "write" || type === "type") {
+    return {
+      kind: "type", key: key, why: why, phon: card.p,
+      prompt: type === "write"
+        ? "Type the Munhwao word"
+        : "Type the word in Hangul",
+      q: card.e,
+      hint: type === "type" && card.p ? card.p : "",
+      correct: card.h,
+      speak: card.h
+    };
+  }
+
+  if (type === "build") {
+    const syls = card.h.split(" ").length > 1 ? card.h.split(" ") : (function () { return Array.from(card.h); })();
+    return {
+      kind: "build", key: key, why: why, phon: card.p,
+      prompt: "Build the word (tap the pieces in order)",
+      q: card.e,
+      pieces: shuffle(syls), correct: syls,
+      speak: card.h
+    };
+  }
+
+  return null;
+}
+
+/* num drill: Arabic numeral -> Hangul reading (mc or type mode) */
+function numDrill(lesson, mode) {
+  const cfg = lesson.numDrill || { kind: "native", min: 1, max: 20 };
+  const isSino = cfg.kind === "sino";
+  const n = randInt(cfg.min, cfg.max);
+  const reading = isSino ? MH.sinoNum(n) : MH.nativeNum(n);
+  const phon = isSino ? MH.sinoNumPhon(n) : MH.nativeNumPhon(n);
+  const label = isSino ? "Sino-Korean number (use 륙 for 6)" : "Native number";
+  const key = lesson.id + ":num:" + n;
+
+  if (mode === "type") {
+    return {
+      kind: "type", key: key,
+      why: "The " + label + " for " + n + " is " + reading + ".",
+      prompt: "Type the " + label.toLowerCase(),
+      q: "Say and type the number: " + prettyNum(n),
+      hint: phon,
+      correct: reading,
+      speak: reading
+    };
+  }
+  const pool = allVocabCards().concat([]);
+  const optMap = {};
+  optMap[reading] = true;
+  const opts = [{ text: reading, ok: true }];
+  let tries = 0;
+  while (opts.length < 4 && tries < 120) {
+    tries++;
+    const m = isSino ? MH.sinoNum(randInt(cfg.min, Math.max(cfg.max, 100))) : MH.nativeNum(randInt(cfg.min, 99));
+    if (!m || optMap[m]) continue;
+    optMap[m] = true;
+    opts.push({ text: m, ok: false });
+  }
+  return {
+    kind: "choices", key: key,
+    why: "The " + label.toLowerCase() + " for " + n + " is " + reading + " (" + phon + ").",
+    prompt: "Choose the " + label.toLowerCase(),
+    q: prettyNum(n),
+    qHangul: false,
+    ops: shuffle(opts), opAttr: "h",
+    speak: reading
+  };
+}
+
+/* stitch: avoid two identical drill kinds next to each other */
+function interleave(drills) {
+  const buckets = {};
+  drills.forEach(function (d) { (buckets[d.kind] = buckets[d.kind] || []).push(d); });
+  const out = [];
+  let last = "";
+  while (Object.keys(buckets).some(function (k) { return buckets[k].length; })) {
+    const kinds = shuffle(Object.keys(buckets).filter(function (k) { return buckets[k].length; }));
+    let picked = null;
+    for (let i = 0; i < kinds.length; i++) if (kinds[i] !== last) { picked = kinds[i]; break; }
+    if (!picked) picked = kinds[0];
+    out.push(buckets[picked].shift());
+    last = picked;
+  }
+  return out;
+}
+
+/* build the full step sequence for a lesson */
+function buildSteps(lesson) {
+  const steps = [];
+  (lesson.learn || []).forEach(function (c) { steps.push({ kind: "learn", card: c }); });
+  (lesson.learnExtra || []).forEach(function (c) { steps.push({ kind: "learn", card: c }); });
+  if (lesson.grammar && lesson.grammar.title) steps.push({ kind: "learnGrammar", grammar: lesson.grammar });
+
+  const cards = lessonCards(lesson);
+  const types = (lesson.drillTypes || ["mc", "listen", "read", "pick", "write", "build", "type"])
+    .filter(function (t) { return t !== "numDrill"; });
+
+  const drills = [];
+  types.forEach(function (t) {
+    const n = t === "build" ? 2 : 3;
+    for (let i = 0; i < n; i++) {
+      const ex = makeDrill(t, cards, lesson);
+      if (ex) drills.push(ex);
+    }
+  });
+  if ((lesson.drillTypes || []).indexOf("numDrill") >= 0) {
+    drills.push(numDrill(lesson, "pick"));
+    drills.push(numDrill(lesson, "type"));
+  }
+  interleave(shuffle(drills)).forEach(function (d) { steps.push({ kind: "drill", ex: d }); });
+  return steps;
+}/* =====================================================================
+   SKILL TREE + BANNER
+   ===================================================================== */
+function lessonUnlocked(id) {
+  if (id === 1) return true;
+  if (state.lessonCompletion[id - 1]) return true;
+  if (state.placement && state.placement.tier && MH.byId(id)) {
+    const t = MH.byId(id).tier;
+    const prevTier = MH.byId(id - 1) ? MH.byId(id - 1).tier : t;
+    const gap = t - prevTier;
+    if (t <= state.placement.tier + Math.max(0, gap - 1)) return true;
+  }
+  return false;
+}
+
+function lessonMasteryPct(id) {
+  const l = MH.byId(id);
+  if (!l) return 0;
+  const cards = lessonCards(l);
+  let total = 0, filled = 0;
+  cards.forEach(function (c) {
+    if (!c.k) return;
+    total++;
+    if ((state.wordMastery[c.k] || 0) >= 3) filled++;
+  });
+  return total ? Math.round((filled / total) * 100) : 0;
+}
+
+function nextSuggestedLesson() {
+  const complete = state.lessonCompletion;
+  for (let i = 1; i <= 140; i++) {
+    const l = MH.byId(i);
+    if (!l) return null;
+    const prevOk = i === 1 || complete[i - 1];
+    const placementOk = state.placement ? l.tier <= state.placement.tier : true;
+    if (!complete[i] && (prevOk || placementOk)) return l;
+  }
+  return null;
+}
+
+function renderBanner() {
+  const b = el("learn-banner");
+  const due = dueReviewCount();
+  const totalDone = Object.keys(state.lessonCompletion).length;
+  const next = nextSuggestedLesson();
+
+  let html = "";
+  if (totalDone >= 140 && due === 0) {
+    html = '<div class="banner-icon">ALL</div><div><div class="banner-title">Course complete - keep your streak alive!</div><div class="banner-sub">140 lessons done. Review due words and practice daily.</div></div>';
+  } else if (next) {
+    const tier = MH.TIERS.find(function (t) { return t.id === next.tier; }) || {};
+    const cls = "tier" + next.tier;
+    html = '<div class="banner-icon ' + cls + '">' + next.tier + "</div>"
+      + '<div><div class="banner-title">Next lesson: ' + next.title + "</div>"
+      + '<div class="banner-sub">Tier ' + next.tier + " - " + (tier.title || "") + (due ? ' | <b style="color:var(--orange);">' + due + ' review(s) due</b>' : "") + "</div></div>"
+      + '<div class="banner-cta"><button class="lesson-btn check" id="banner-go">Continue</button></div>';
+  } else {
+    html = '<div class="banner-icon">WEL</div><div><div class="banner-title">Welcome to Munhwao Mastery</div><div class="banner-sub">Start with lesson 1: the Hangul alphabet and formal greetings.</div></div>'
+      + '<div class="banner-cta"><button class="lesson-btn check" id="banner-go">Start</button></div>';
+  }
+  b.innerHTML = html;
+  const go = el("banner-go");
+  if (go) go.addEventListener("click", function () { if (next) startLesson(next.id); else startFlashcards(); });
+}
+
+function renderTree() {
+  touchStreak(); updateTopbarStats();
+  renderBanner();
+  const pb = el("placement-box");
+  if (pb) pb.classList.toggle("hidden", !!state.placement);
+  const tree = el("skill-tree");
+
+  let html = "";
+  const totalDone = Object.keys(state.lessonCompletion).length;
+  let cursor = 0;
+  MH.TIERS.forEach(function (tier) {
+    const lessons = MH.LESSONS.filter(function (l) { return l.tier === tier.id; });
+    const fill = lessons.length ? Math.min(100, Math.max(0, (totalDone - cursor) / lessons.length * 100)) : 0;
+    cursor += lessons.length;
+    html += '<div class="tier"><div class="skill-path" style="--fill:' + Math.round(fill) + '%">';
+
+    for (let i = 0; i < lessons.length; i += 2) {
+      const pair = lessons.slice(i, i + 2);
+      html += '<div class="skill-row">';
+      pair.forEach(function (l) {
+        html += skillCard(l, tier);
+      });
+      if (pair.length === 1) html += '<div style="width:110px;"></div>';
+      html += "</div>";
+    }
+    html += "</div></div>";
+  });
+  tree.innerHTML = html;
+  tree.querySelectorAll(".skill").forEach(function (elCard, i) {
+    elCard.style.animationDelay = Math.min(i * 0.045, 1.5) + "s";
+    elCard.addEventListener("click", function () {
+      const id = parseInt(elCard.dataset.id, 10);
+      if (!lessonUnlocked(id)) {
+        confirmBox("Lesson locked", 'Complete the previous lesson first, or take the placement test. Lesson: ' + elCard.dataset.title, "OK", null);
+        return;
+      }
+      startLesson(id);
+    });
+  });
+}
+
+function skillCard(l, tier) {
+  const unlocked = lessonUnlocked(l.id);
+  const done = state.lessonCompletion[l.id];
+  const m = lessonMasteryPct(l.id);
+  const cls = !unlocked ? "locked" : done ? "done" : "tier" + tier.id;
+  const sym = done ? "OK" : String(l.id);
+  const meta = done
+    ? '<span class="skill-meta">' + m + "%</span>"
+    : unlocked
+      ? '<span class="skill-meta">New</span>'
+      : '<span class="skill-meta locked">Locked</span>';
+  return '<div class="skill" data-id="' + l.id + '" data-title="' + l.title + '">'
+    + '<div class="skill-circle ' + cls + '">' + sym + "</div>"
+    + '<div class="skill-label' + (unlocked ? "" : " locked") + '">' + l.title + "</div>"
+    + meta
+    + "</div>";
+}
+
+function updateTopbarStats() {
+  el("stat-streak").textContent = state.streak;
+  el("stat-xp").textContent = state.xp;
+  el("stat-hearts").textContent = state.hearts;
+}
+
+/* =====================================================================
+   LESSON SESSION
+   ===================================================================== */
+let lessonSteps = [], stepIdx = 0, correctThisSession = 0;
+let curLesson = null, answered = false, stepStart = 0, curAnswerValue = null;
+let curChoices = null;   // for options grid
+
+function startLesson(id) {
+  if (id == null) return;
+  const l = MH.byId(id);
+  if (!l) { toast("Lesson data not found"); return; }
+  curLesson = l;
+  lessonSteps = buildSteps(l);
+  stepIdx = 0;
+  correctThisSession = 0;
+  answered = false;
+  seedState = (Date.now() % 2147483647) || 42;
+  openLessonModal("lesson");
+  runStep();
+}
+
+function openLessonModal(mode) {
+  openModal();
+  const title = curLesson ? "Lesson " + curLesson.id + " - " + curLesson.title : mode === "placement" ? "Placement Test" : "Modal";
+  setTopbar(
+    '<button class="lesson-close" id="modal-close" title="Quit">&times;</button>'
+    + '<div class="lesson-title">' + title + "</div>"
+    + '<div class="lesson-progress-bar"><div class="lesson-progress-fill" id="progress-fill"></div></div>'
+    + '<div class="lesson-hearts">HEART <span id="lesson-hearts">' + state.hearts + "</span></div>"
+  );
+  el("modal-close").addEventListener("click", quitLesson);
+}
+
+function quitLesson() {
+  closeModal();
+  answered = false;
+}
+
+function speakIfAuto(txt) { speak(txt); }
+function stopAnySpeech() {
+  if (ttsSupported()) { try { speechSynthesis.cancel(); } catch (e) {} }
+  audioQ = [];
+  audioBusy = false;
+}
+function hasHangul(t) { return /[가-힣ㅏ-ㅣㄱ-ㅎ]/.test(t || ""); }
+function koreanPieces(str) { return (str.match(/[가-힣ㅏ-ㅣㄱ-ㅎ]+/g) || []); }
+function speakSeq(list) {
+  const seen = {}, uniq = [];
+  (list || []).forEach(function (t) {
+    t = (t || "").trim();
+    if (t && !seen[t]) { seen[t] = true; uniq.push(t); }
+  });
+  uniq.forEach(function (t) { speak(t); });
+}
+function optPlaySpan(text) {
+  return hasHangul(text) ? '<span class="opt-play" data-t="' + encodeURIComponent(text) + '">LISTEN</span>' : "";
+}
+function wireOptPlay() {
+  document.querySelectorAll("#modal-body .opt-play").forEach(function (sp) {
+    sp.addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      speak(decodeURIComponent(sp.dataset.t));
+    });
+  });
+}
+
+function progressPct() {
+  return Math.round((stepIdx / lessonSteps.length) * 100);
+}
+
+function runStep() {
+  if (stepIdx >= lessonSteps.length) { completeLesson(); return; }
+  el("progress-fill").style.width = progressPct() + "%";
+  el("lesson-hearts").textContent = state.hearts;
+  const step = lessonSteps[stepIdx];
+  answered = false;
+  curAnswerValue = null;
+  curChoices = null;
+  stepStart = Date.now();
+  hideFooter();
+
+  if (step.kind === "learn") renderLearnCard(step.card);
+  else if (step.kind === "learnGrammar") renderGrammarScreen(step.grammar);
+  else renderDrill(step.ex);
+}
+
+/* --- learn phase screens --- */
+function renderLearnCard(card) {
+  let html = '<div class="learn-card">';
+  html += '<div class="learn-kicker">Learn</div>';
+  html += '<div class="learn-hangul">' + card.h + '</div> <button type="button" id="card-speak" class="speaker-btn" style="margin-left:8px;">SP</button>';
+  if (card.p) html += '<div class="learn-phon">' + card.p + "</div>";
+  html += '<div class="learn-en">' + card.e + "</div>";
+  if (card.n) html += '<div class="learn-note">' + card.n + "</div>";
+  if (card.s) html += '<div class="learn-sample"><div class="ls-h">' + card.s + '</div></div>';
+  html += "</div>";
+  setBody(html);
+  el("card-speak").addEventListener("click", function () { speak(card.h); });
+  speak(card.h);
+  setFooter('<button class="lesson-btn got-it wide" id="got-it">Got it</button>');
+  el("got-it").addEventListener("click", function () { stepIdx++; runStep(); });
+}
+
+function renderGrammarScreen(g) {
+  let html = '<div class="learn-card">';
+  html += '<div class="learn-kicker">Grammar point <button class="mini-speak" id="g-listen" type="button" style="margin-left:6px;">LISTEN</button></div>';
+  html += '<h2 style="font-weight:900;font-size:1.35rem;margin-bottom:10px;">' + g.title + "</h2>";
+  if (g.body) html += '<p style="color:var(--text-dim);line-height:1.55;margin-bottom:12px;">' + g.body + "</p>";
+  html += '<div style="text-align:left;background:var(--surface2);border-radius:var(--radius-sm);padding:16px;line-height:1.7;">';
+  (g.lines || []).forEach(function (line) {
+    html += '<div style="margin-bottom:6px;"><span class="update-badge">' + line.replace(/^(.{0,14}?):/, "<b>$1</b>:") + "</span></div>";
+  });
+  html += "</div></div>";
+  setBody(html);
+  el("g-listen").addEventListener("click", function () {
+    speakSeq(koreanPieces((g.body || "") + " " + (g.lines || []).join(" ")));
+  });
+  setFooter('<button class="lesson-btn got-it wide" id="grammar-gotit">Got it</button>');
+  el("grammar-gotit").addEventListener("click", function () { stepIdx++; runStep(); });
+}
+
+/* --- drill screens --- */
+function renderDrill(ex) {
+  if (ex.kind === "choices" || ex.kind === "listen") renderChoices(ex);
+  else if (ex.kind === "type") renderTypeInput(ex);
+  else if (ex.kind === "build") renderBuild(ex);
+}
+
+function optionButtonHTML(op, i) {
+  const tag = String.fromCharCode(65 + i);
+  return '<button class="lesson-option" data-val="' + encodeURIComponent(op.text) + '" data-a="' + op.ok + '" data-i="' + i + '">'
+    + '<span class="opt-key">' + tag + "</span>"
+    + '<span class="opt-title">' + op.text + "</span>"
+    + optPlaySpan(op.text)
+    + '<span class="opt-flag"></span></button>';
+}
+
+function renderChoices(ex) {
+  let qHtml = "";
+  if (ex.qHangul) {
+    qHtml = '<div class="lesson-question-row"><button type="button" id="q-speak" class="speaker-btn" style="margin:0;">SP</button>'
+      + '</div><div class="lesson-question-hangul">' + ex.q + "</div>";
+    if (ex.qPhon) qHtml += '<div class="lesson-phonetics">' + ex.qPhon + "</div>";
+  } else {
+    qHtml = '<div class="lesson-question">' + ex.q + "</div>";
+  }
+  setBody('<div class="lesson-prompt">' + ex.prompt + "</div>" + qHtml
+    + '<input type="hidden" id="ex-data" value="' + encodeURIComponent(JSON.stringify({ key: ex.key, correct: ex.ops.find(function (o) { return o.ok; }).text, why: ex.why, a: ex.opAttr })) + '">'
+    + '<div class="lesson-options">' + ex.ops.map(optionButtonHTML).join("") + "</div>");
+
+  if (ex.speak) { speak(ex.speak); }
+  const sp = el("q-speak");
+  if (sp && ex.speak) sp.addEventListener("click", function () { speak(ex.speak); });
+
+  prepareChoices(ex);
+  setFooter('<button class="lesson-btn check" id="check-btn" disabled>Check</button>');
+  el("check-btn").addEventListener("click", function () { checkCurrent(); });
+}
+
+function prepareChoices(ex) {
+  const data = JSON.parse(decodeURIComponent(el("ex-data").value));
+  curChoices = data;
+  wireOptPlay();
+  document.querySelectorAll("#modal-body .lesson-option").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      if (answered) return;
+      document.querySelectorAll("#modal-body .lesson-option").forEach(function (b) { b.classList.remove("selected"); });
+      if (btn.dataset.a === "true") btn.classList.add("correct");
+      else btn.classList.add("selected");
+      curChoices.isCorrect = btn.dataset.a === "true";
+      curChoices.selectedVal = btn.dataset.val;
+      el("check-btn").disabled = false;
+    });
+  });
+}
+
+function renderTypeInput(ex) {
+  let html = '<div class="lesson-prompt">' + ex.prompt + "</div>";
+  html += '<div class="lesson-question">' + ex.q + "</div>";
+  if (ex.hint) html += '<div class="lesson-phonetics">' + ex.hint + "</div>";
+  html += '<input type="text" class="lesson-input" id="type-input" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Type Munhwao here">';
+  html += '<input type="hidden" id="ex-data" value="' + encodeURIComponent(JSON.stringify({ key: ex.key, correct: ex.correct, why: ex.why })) + '">';
+  html += '<div id="type-kbd"></div>';
+  setBody(html);
+  const inp = el("type-input");
+  const kbdBox = el("type-kbd");
+  kbdBox.innerHTML = "";
+  buildKeyboard(kbdBox, { target: inp, composed: true });
+  inp.addEventListener("input", function () {
+    const v = toHangul(inp.value);
+    if (v !== inp.value) { inp.value = v; }
+    el("check-btn").disabled = inp.value.trim() === "";
+  });
+  if (ex.speak) { setTimeout(function () { speak(ex.speak); }, 150); }
+  setFooter('<button class="lesson-btn check" id="check-btn" disabled>Check</button>');
+  el("check-btn").addEventListener("click", function () { checkCurrent(); });
+  setTimeout(function () { inp.focus(); }, 60);
+}
+
+function renderBuild(ex) {
+  let html = '<div class="lesson-prompt">' + ex.prompt + "</div>";
+  html += '<div class="lesson-question">' + ex.q + "</div>";
+  if (ex.phon) html += '<div class="lesson-phonetics">' + ex.phon + "</div>";
+  html += '<input type="hidden" id="ex-data" value="' + encodeURIComponent(JSON.stringify({ key: ex.key, correct: ex.correct.join(""), why: ex.why })) + '">';
+  html += '<div class="builder-chips" id="build-answer"></div>';
+  html += '<div class="builder-wordbank" id="build-bank"></div>';
+  setBody(html);
+  const bank = el("build-bank");
+  ex.pieces.forEach(function (w) {
+    const chip = document.createElement("button");
+    chip.type = "button";
+    chip.className = "builder-chip";
+    chip.textContent = w;
+    chip.dataset.w = w;
+    chip.addEventListener("click", function () { addBuildChip(chip); });
+    bank.appendChild(chip);
+  });
+  if (ex.speak) { setTimeout(function () { speak(ex.speak); }, 150); }
+  buildAnswer = [];
+  setFooter('<button class="lesson-btn check" id="check-btn" disabled>Check</button>');
+  el("check-btn").addEventListener("click", function () { checkCurrent(); });
+}
+let buildAnswer = [];
+function addBuildChip(btn) {
+  if (btn.classList.contains("used")) return;
+  btn.classList.add("used");
+  buildAnswer.push(btn.dataset.w);
+  const ans = el("build-answer");
+  const chip = document.createElement("button");
+  chip.type = "button";
+  chip.className = "builder-chip builder-answer-chip";
+  chip.textContent = btn.dataset.w + " x";
+  chip.addEventListener("click", function () {
+    const w = btn.dataset.w;
+    chip.remove();
+    buildAnswer = buildAnswer.filter(function (x, i) { return !(x === w && i === buildAnswer.indexOf(w)); });
+    btn.classList.remove("used");
+    el("check-btn").disabled = buildAnswer.length === 0;
+  });
+  ans.appendChild(chip);
+  el("check-btn").disabled = false;
+}
+
+/* ---- answer evaluation ---- */
+function checkCurrent() {
+  if (answered) return;
+  const step = lessonSteps[stepIdx];
+  const ex = step.kind === "drill" ? step.ex : null;
+  if (!ex) return;
+  answered = true;
+
+  let correct = false, aVal = "";
+  if (ex.kind === "choices" || ex.kind === "listen") {
+    aVal = curChoices ? String(curChoices.isCorrect) : "false";
+    correct = curChoices ? curChoices.isCorrect : false;
+    el("check-btn").disabled = true;
+  } else if (ex.kind === "type") {
+    const inp = el("type-input");
+    const expected = JSON.parse(decodeURIComponent(el("ex-data").value)).correct;
+    aVal = inp.value.trim();
+    correct = toHangul(inp.value).trim() === String(expected).trim();
+  } else if (ex.kind === "build") {
+    const expected = JSON.parse(decodeURIComponent(el("ex-data").value)).correct;
+    aVal = buildAnswer.join("");
+    correct = buildAnswer.join("") === expected;
+  }
+
+  const dt = Date.now() - stepStart;
+  let quality = 0;
+  if (correct) quality = dt < 3000 ? 5 : dt < 6500 ? 4 : 3;
+  state.totalSeen++;
+  if (correct) { state.totalCorrect++; correctThisSession++; addXp(10); }
+  else { addXp(1); if (state.hearts > 0) state.hearts--; }
+  srsReview(ex.key, quality);
+  saveState();
+  updateTopbarStats();
+  showFeedback(ex, correct, quality, aVal);
+}
+
+function showFeedback(ex, correct, quality, aVal) {
+  const body = el("modal-body");
+  const data = JSON.parse(decodeURIComponent(el("ex-data").value));
+  const rightAns = data.correct;
+
+  if (ex.kind === "choices" || ex.kind === "listen") {
+    const selVal = curChoices ? curChoices.selectedVal : null;
+    document.querySelectorAll("#modal-body .lesson-option").forEach(function (b) {
+      b.classList.add("disabled");
+      if (b.dataset.a === "true") { b.classList.add("correct"); b.querySelector(".opt-flag").textContent = "YES"; }
+      else if (selVal && b.dataset.val === selVal) { b.classList.add("wrong"); b.querySelector(".opt-flag").textContent = "NO"; }
+    });
+  } else if (ex.kind === "type") {
+    body.querySelector("#type-input").classList.add(correct ? "correct" : "wrong");
+  } else if (ex.kind === "build") {
+    document.querySelectorAll("#build-bank .builder-chip").forEach(function (b) { b.classList.add("used"); });
+  }
+
+  const whyHtml = (data.why ? '<div style="margin-top:8px;font-size:0.86rem;line-height:1.5;color:var(--text);">' + data.why + "</div>" : "");
+  const fb = document.createElement("div");
+  fb.className = "feedback-banner " + (correct ? "correct" : "wrong");
+  fb.innerHTML = '<div class="fb-head">' + (correct ? "Correct!" : "Not quite") + "</div>"
+    + '<div class="fb-why">' + (correct ? "Great work. " : 'Correct answer: <span class="fb-answer">' + rightAns + "</span>. ") + whyHtml + "</div>";
+  body.prepend(fb);
+  el("lesson-hearts").textContent = state.hearts;
+
+  setFooter('<button class="lesson-btn continue ' + (correct ? "correct" : "wrong") + '" id="continue-btn">Continue</button>');
+  el("continue-btn").addEventListener("click", function () {
+    stepIdx++;
+    runStep();
+  });
+}
+
+function completeLesson() {
+  stopAnySpeech();
+  const l = curLesson;
+  const n = lessonSteps.length;
+  const drillN = lessonSteps.filter(function (s) { return s.kind === "drill"; }).length || 1;
+  const rate = correctThisSession / drillN;
+  const stars = rate >= 0.9 ? 3 : rate >= 0.6 ? 2 : 1;
+  const bonus = 15;
+  addXp(bonus);
+  const prev = state.lessonCompletion[l.id];
+  state.lessonCompletion[l.id] = {
+    stars: Math.max(prev ? prev.stars : 0, stars),
+    xp: (correctThisSession * 10 + bonus) + (prev ? prev.xp : 0),
+    date: new Date().toISOString()
+  };
+  state.hearts = state.maxHearts;
+  saveState();
+  updateTopbarStats();
+
+  setTopbar(
+    '<button class="lesson-close" id="modal-close" title="Quit">&times;</button>'
+    + '<div class="lesson-title">Lesson complete</div>'
+    + '<div class="lesson-progress-bar"><div class="lesson-progress-fill" style="width:100%;"></div></div>'
+  );
+  el("modal-close").addEventListener("click", quitLesson);
+
+  let starHtml = "";
+  for (let i = 0; i < 3; i++) starHtml += '<div class="star' + (i < stars ? " filled" : "") + '"></div>';
+  setBody('<div class="complete">'
+    + '<div class="complete-icon">GOOD</div>'
+    + "<h2>Lesson complete!</h2>"
+    + '<div class="xp-earned">+' + (correctThisSession * 10 + bonus) + " XP</div>"
+    + '<div class="sub">' + l.title + "</div>"
+    + '<div class="stars">' + starHtml + "</div>"
+    + '<div class="lesson-stats">'
+    + "<span>Accurate <b>" + correctThisSession + " of " + drillN + "</b></span>"
+    + "<span>Streak <b>" + state.streak + " day</b></span>"
+    + '<span>Total XP <b>' + state.xp + "</b></span>"
+    + "</div></div>");
+  setFooter('<button class="lesson-btn continue wide" id="finish-btn">Continue</button>');
+  el("finish-btn").addEventListener("click", function () {
+    closeModal();
+    const nxt = MH.byId(l.id + 1);
+    if (nxt) setTimeout(function () { startLesson(nxt.id); }, 250);
+    else renderTree();
+  });
+}
+
+/* =====================================================================
+   PLACEMENT TEST
+   ===================================================================== */
+let placeIdx = 0, placeGood = 0;
+
+function startPlacement() {
+  placeIdx = 0;
+  placeGood = 0;
+  openModal();
+  setTopbar(
+    '<button class="lesson-close" id="modal-close" title="Quit">&times;</button>'
+    + '<div class="lesson-title">Placement Test</div>'
+    + '<div class="lesson-progress-bar"><div class="lesson-progress-fill" id="progress-fill"></div></div>'
+  );
+  el("modal-close").addEventListener("click", quitLesson);
+  placementStep();
+}
+
+function placementStep() {
+  if (placeIdx >= MH.PLACEMENT.length) { placementResult(); return; }
+  const q = MH.PLACEMENT[placeIdx];
+  const choices = shuffle(q.opt.slice());
+  el("progress-fill").style.width = Math.round((placeIdx / MH.PLACEMENT.length) * 100) + "%";
+  setBody('<div class="lesson-prompt">Placement question ' + (placeIdx + 1) + " of " + MH.PLACEMENT.length
+    + ' <button class="mini-speak" id="p-listen" type="button">LISTEN</button></div>'
+    + '<div class="lesson-question">' + q.q + "</div>"
+    + '<input type="hidden" id="pex" value="' + encodeURIComponent(JSON.stringify({ ans: q.opt[q.ans], note: q.note })) + '">'
+    + '<div class="lesson-options">'
+    + choices.map(function (o, i) {
+      return '<button class="lesson-option" data-val="' + encodeURIComponent(o) + '" data-i="' + i + '"><span class="opt-key">' + String.fromCharCode(65 + i) + "</span><span class=\"opt-title\">" + o + "</span>"
+        + optPlaySpan(o)
+        + '<span class="opt-flag"></span></button>';
+    }).join("")
+    + "</div>");
+  el("p-listen").addEventListener("click", function () {
+    speakSeq(koreanPieces(q.q).concat(q.opt));
+  });
+  wireOptPlay();
+  document.querySelectorAll("#modal-body .lesson-option").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      if (btn.classList.contains("correct") || btn.classList.contains("wrong")) return;
+      document.querySelectorAll("#modal-body .lesson-option").forEach(function (b) { b.classList.add("disabled"); });
+      const data = JSON.parse(decodeURIComponent(el("pex").value));
+      const right = decodeURIComponent(btn.dataset.val) === data.ans;
+      if (right) placeGood++;
+      btn.classList.add(right ? "correct" : "wrong");
+      const fb = document.createElement("div");
+      fb.className = "feedback-banner " + (right ? "correct" : "wrong");
+      fb.innerHTML = '<div class="fb-head">' + (right ? "Correct" : "Not quite") + "</div>"
+        + '<div class="fb-why">' + (data.note || "") + "</div>";
+      el("modal-body").appendChild(fb);
+      setFooter('<button class="lesson-btn continue ' + (right ? "correct" : "wrong") + '" id="p-next">Continue</button>');
+      el("p-next").addEventListener("click", function () { placeIdx++; placementStep(); });
+    });
+  });
+}
+
+function placementResult() {
+  const res = MH.placementTier(placeGood);
+  state.placement = { score: placeGood, max: MH.PLACEMENT.length, tier: res.tier, lesson: res.lesson };
+  saveState();
+  setTopbar(
+    '<button class="lesson-close" id="modal-close" title="Quit">&times;</button>'
+    + '<div class="lesson-title">Placement result</div>'
+  );
+  el("modal-close").addEventListener("click", quitLesson);
+  const tier = MH.TIERS.find(function (t) { return t.id === res.tier; });
+  setBody('<div class="placement-result">'
+    + "<h2>Your level</h2>"
+    + '<p style="color:var(--text-dim);">You answered <b style="color:var(--text);">' + placeGood + " of " + MH.PLACEMENT.length + "</b> correctly.</p>"
+    + '<span class="tier-chip" style="background:var(--' + (tier ? tier.color : "green") + ');">Tier ' + res.tier + " - " + res.title + "</span>"
+    + '<p style="color:var(--text-dim);margin-top:14px;line-height:1.5;">Lessons at and above your level are unlocked. Start at your personal tier and work forward - no repeating what you already know.</p>'
+    + "</div>");
+  setFooter('<button class="lesson-btn continue wide" id="p-start">Start at ' + res.title + "</button>");
+  el("p-start").addEventListener("click", function () {
+    closeModal();
+    setTimeout(function () { startLesson(res.lesson); }, 200);
+  });
+}/* =====================================================================
+   TOOLS PAGE
+   ===================================================================== */
+const TOOL_DEFS = [
+  { id: "flash", name: "Flashcards", desc: "Spaced repetition queue of words you are learning." },
+  { id: "reference", name: "Reference", desc: "Search the full vocabulary from all 140 lessons." },
+  { id: "conjugator", name: "Conjugator", desc: "Input any verb stem; see polite present, past, future, more." },
+  { id: "numbers", name: "Numbers", desc: "Native and Sino-Korean number trainer with real readings." },
+  { id: "hangul", name: "Hangul", desc: "Alphabet chart, syllabary explorer and composer practice." },
+  { id: "writing", name: "Writing", desc: "Write target words; check how close you are." }
+];
+
+function renderTools() {
+  const box = el("tools-content");
+  box.innerHTML = '<div class="tool-box"><div class="grid-2">'
+    + TOOL_DEFS.map(function (t) {
+      return '<button class="tool-card" data-tool="' + t.id + '"><div class="tool-name">' + t.name + '</div><div class="tool-desc">' + t.desc + "</div></button>";
+    }).join("")
+    + "</div></div>";
+  box.querySelectorAll(".tool-card").forEach(function (b) {
+    b.addEventListener("click", function () { openTool(b.dataset.tool); });
+  });
+}
+
+function openTool(id) {
+  const box = el("tools-content");
+  box.innerHTML = '<div class="tool-box"><button class="back-btn" id="tool-back">BACK TO TOOLS</button><div id="tool-pane"></div></div>';
+  el("tool-back").addEventListener("click", renderTools);
+  if (id === "flash") renderFlashTool();
+  else if (id === "reference") renderRefTool();
+  else if (id === "conjugator") renderConjTool();
+  else if (id === "numbers") renderNumTool();
+  else if (id === "hangul") renderHangulTool();
+  else if (id === "writing") renderWritingTool();
+}
+
+/* --- Flashcards ------------------------------------------------------ */
+function renderFlashTool() {
+  const pane = el("tool-pane");
+  const due = Object.keys(state.srs).filter(function (k) { return state.srs[k].due <= Math.round(Date.now() / 1000); });
+  const html = '<div style="text-align:center;"><div class="lesson-prompt">Flashcards</div>'
+    + '<div style="color:var(--text-dim);margin-bottom:14px;">' + due.length + " words due for review</div>"
+    + '<button class="lesson-btn check" id="flash-start">Review now</button></div>';
+  pane.innerHTML = html;
+  el("flash-start").addEventListener("click", function () { flashSession(due); });
+}
+function startFlashcards() { showPage("tools"); openTool("flash"); }
+let flashQueue = [], flashIdx = 0;
+function flashSession(keys) {
+  flashQueue = keys.slice();
+  flashIdx = 0;
+  if (!flashQueue.length) { el("tool-pane").innerHTML = '<div style="text-align:center;color:var(--text-dim);">All caught up! Nothing due right now.</div>'; return; }
+  flashStep();
+}
+function flashStep() {
+  if (flashIdx >= flashQueue.length) {
+    el("tool-pane").innerHTML = '<div style="text-align:center;"><div class="complete-icon">DONE</div><h2>Reviews complete</h2><p style="color:var(--text-dim);">Spaced repetition updated.</p></div>';
+    return;
+  }
+  const key = flashQueue[flashIdx];
+  const card = MH.vocab(key);
+  el("tool-pane").innerHTML = '<div class="learn-card">'
+    + '<div class="learn-hangul">' + (card ? card.h : key) + "</div>"
+    + (card && card.p ? '<div class="learn-phon">' + card.p + "</div>" : "")
+    + '<button class="lesson-btn speaker" id="f-speak" type="button">PLAY</button>'
+    + '<div class="learn-en" id="f-meaning" style="display:none;">' + (card ? card.e : "") + "</div>"
+    + (card && card.n ? '<div class="learn-note" id="f-note" style="display:none;">' + card.n + "</div>" : "")
+    + "</div>"
+    + '<div id="f-actions" style="display:none;margin-top:14px;display:none;flex-direction:column;gap:8px;">'
+    + '<button class="lesson-btn wrong" id="f-bad">Again</button>'
+    + '<button class="lesson-btn check" id="f-good">Good</button>'
+    + '<button class="lesson-btn correct" id="f-easy">Easy</button>'
+    + "</div>";
+  if (card) speak(card.h);
+  el("f-speak").addEventListener("click", function () { if (card) speak(card.h); });
+  el("f-meaning").style.display = "block";
+  if (el("f-note")) el("f-note").style.display = "block";
+  const acts = el("f-actions");
+  acts.style.display = "flex";
+  acts.querySelector("#f-bad").addEventListener("click", function () { reviewDone(key, 1); });
+  acts.querySelector("#f-good").addEventListener("click", function () { reviewDone(key, 4); });
+  acts.querySelector("#f-easy").addEventListener("click", function () { reviewDone(key, 5); });
+}
+function reviewDone(key, q) {
+  srsReview(key, q);
+  saveState();
+  flashIdx++;
+  flashStep();
+}
+
+/* --- Reference ------------------------------------------------------- */
+function renderRefTool() {
+  const categories = {};
+  MH.VOCAB_KEYS.forEach(function (k) {
+    const v = MH.vocab(k);
+    if (!v) return;
+    (categories[v.c] = categories[v.c] || []).push(v);
+  });
+  const cats = Object.keys(categories).sort();
+  const pane = el("tool-pane");
+  pane.innerHTML = '<input type="text" class="lesson-input" id="ref-search" placeholder="Search by Hangul or English...">'
+    + '<div id="ref-results"></div>';
+
+  function paint(items) {
+    const res = el("ref-results");
+    if (!items.length) { res.innerHTML = '<div style="color:var(--text-dim);padding:12px;">No matches.</div>'; return; }
+    res.innerHTML = items.map(function (v) {
+      return '<button class="ref-row" data-h="' + v.h + '"><span class="ref-h">' + v.h + "</span><span class=\"ref-e\">" + v.e + '</span><span class="ref-speak">PLAY</span></button>';
+    }).join("");
+    res.querySelectorAll(".ref-row").forEach(function (b) {
+      b.addEventListener("click", function () { speak(b.dataset.h); });
+    });
+  }
+  el("ref-search").addEventListener("input", function () {
+    const q = el("ref-search").value.trim().toLowerCase();
+    if (!q) {
+      el("ref-results").innerHTML = cats.map(function (c) {
+        return '<div class="ref-cat">' + c + ' <span style="color:var(--text-dim);font-weight:400;">(' + categories[c].length + ")</span></div>"
+          + categories[c].map(function (v) { return '<button class="ref-row" data-h="' + v.h + '"><span class="ref-h">' + v.h + '</span><span class="ref-e">' + v.e + '</span><span class="ref-speak">PLAY</span></button>'; }).join("");
+      }).join("");
+      el("ref-results").querySelectorAll(".ref-row").forEach(function (b) { b.addEventListener("click", function () { speak(b.dataset.h); }); });
+      return;
+    }
+    const items = [];
+    Object.keys(categories).forEach(function (c) {
+      categories[c].forEach(function (v) {
+        if (v.h.toLowerCase().indexOf(q) >= 0 || v.e.toLowerCase().indexOf(q) >= 0 || (v.n || "").toLowerCase().indexOf(q) >= 0) items.push(v);
+      });
+    });
+    paint(items);
+  });
+  el("ref-results").innerHTML = cats.map(function (c) {
+    return '<div class="ref-cat">' + c + ' <span style="color:var(--text-dim);font-weight:400;">(' + categories[c].length + ")</span></div>"
+      + categories[c].map(function (v) { return '<button class="ref-row" data-h="' + v.h + '"><span class="ref-h">' + v.h + '</span><span class="ref-e">' + v.e + '</span><span class="ref-speak">PLAY</span></button>'; }).join("");
+  }).join("");
+  el("ref-results").querySelectorAll(".ref-row").forEach(function (b) { b.addEventListener("click", function () { speak(b.dataset.h); }); });
+}
+
+/* --- Conjugator ------------------------------------------------------ */
+function renderConjTool() {
+  const pane = el("tool-pane");
+  pane.innerHTML = '<div class="lesson-prompt">Verb conjugator</div>'
+    + '<div class="conj-row"><input type="text" class="lesson-input" id="conj-stem" placeholder="가다, 먹다, 만들다..." value="가다"></div>'
+    + '<div style="text-align:center;margin:10px 0;"><button class="lesson-btn check" id="conj-go">Conjugate</button></div>'
+    + '<div id="conj-out"></div>';
+
+  function go() {
+    const stem = el("conj-stem").value.trim();
+    if (!stem) return;
+    let c;
+    try { c = MH.conjugate(stem); } catch (e) { el("conj-out").innerHTML = '<div style="color:var(--orange);">Not a verb I can parse - enter it with -다 like "가다".</div>'; return; }
+    const rows = [
+      ["Present", c.present], ["Present question", c.presentQ], ["Past", c.past], ["Past question", c.pastQ],
+      ["Future", c.future], ["Future question", c.futureQ], ["Command", c.imperative], ["Let us", c.propositive], ["Casual present", c.casualPresent]
+    ];
+    el("conj-out").innerHTML = '<div class="conj-card"><div class="conj-verb">' + c.verb + "</div>"
+      + (c.hasBatchim ? '<div style="color:var(--text-dim);font-size:0.85rem;">Closed stem (has batchim)</div>' : '<div style="color:var(--text-dim);font-size:0.85rem;">Open stem</div>')
+      + rows.map(function (r) {
+        return '<div class="conj-row-item"><span class="conj-label">' + r[0] + '</span><span class="conj-form">' + r[1] + '</span><button class="mini-speak" data-t="' + r[1] + '">PLAY</button></div>';
+      }).join("") + "</div>";
+    el("conj-out").querySelectorAll(".mini-speak").forEach(function (b) { b.addEventListener("click", function () { speak(b.dataset.t); }); });
+  }
+  el("conj-go").addEventListener("click", go);
+  el("conj-stem").addEventListener("keydown", function (ev) { if (ev.key === "Enter") go(); });
+  go();
+}
+
+/* --- Numbers --------------------------------------------------------- */
+function renderNumTool() {
+  const pane = el("tool-pane");
+  pane.innerHTML = '<div class="lesson-prompt">Number trainer</div>'
+    + '<div style="text-align:center;" id="num-stage"><div class="num-big">0</div></div>'
+    + '<div style="text-align:center;margin:12px 0;"><button class="lesson-btn check" id="num-new">New number</button>'
+    + ' <button class="lesson-btn" id="num-flip" style="background:transparent;border:1px solid var(--border);color:var(--text);">Show</button></div>'
+    + '<div class="num-answer" id="num-answer" style="display:none;"><span id="num-h" class="num-h"></span> <span id="num-p" class="num-p"></span> <button class="mini-speak" id="num-speak" type="button">PLAY</button></div>'
+    + '<div class="num-switch"><button class="ns-btn active" data-kind="native">Native</button><button class="ns-btn" data-kind="sino">Sino</button></div>';
+  let kind = "native", cur = 12, min = 1, max = 99;
+  pane.querySelectorAll(".ns-btn").forEach(function (b) {
+    b.addEventListener("click", function () {
+      pane.querySelectorAll(".ns-btn").forEach(function (x) { x.classList.remove("active"); });
+      b.classList.add("active");
+      kind = b.dataset.kind;
+      max = kind === "sino" ? 10000 : 99;
+      cur = randInt(1, Math.min(max, 99));
+      paint();
+    });
+  });
+  function reading() {
+    if (kind === "sino") {
+      const r = MH.sinoNum(cur), p = MH.sinoNumPhon(cur);
+      return { h: r, p: p };
+    }
+    return { h: MH.nativeNum(cur), p: MH.nativeNumPhon(cur) };
+  }
+  function paint() {
+    el("num-stage").innerHTML = '<div class="num-big">' + prettyNum(cur) + "</div>"
+      + '<div style="color:var(--text-dim);font-size:0.85rem;">' + (kind === "sino" ? "Sino-Korean" : "Native (1-99)") + "</div>";
+    el("num-answer").style.display = "none";
+  }
+  paint();
+  el("num-new").addEventListener("click", function () {
+    cur = randInt(min, max);
+    paint();
+  });
+  el("num-flip").addEventListener("click", function () {
+    const r = reading();
+    el("num-h").textContent = r.h;
+    el("num-p").textContent = r.p;
+    el("num-answer").style.display = "block";
+    el("num-speak").addEventListener("click", function () { speak(r.h); });
+  });
+}
+
+/* --- Hangul explorer / composer -------------------------------------- */
+function renderHangulTool() {
+  const pane = el("tool-pane");
+  let html = '<div class="lesson-prompt">Composer</div>'
+    + '<p style="color:var(--text-dim);font-size:0.9rem;text-align:center;">Type with the on-screen keyboard - jamo auto-compose into syllables.</p>'
+    + '<input type="text" class="lesson-input" id="hu-input" placeholder="Type Hangul...">'
+    + '<div id="hu-kbd"></div>'
+    + '<div style="font-size:2.4rem;font-weight:900;text-align:center;padding:14px;" id="hu-out"></div>'
+    + '<div class="lesson-prompt" style="margin-top:8px;">Alphabet</div>'
+    + '<p style="color:var(--text-dim);font-size:0.85rem;text-align:center;">Consonants</p>'
+    + '<div class="jamo-grid">' + MH.CHO.map(function (c) { return '<button class="jamo" data-j="' + c.j + '">' + c.j + "</button>"; }).join("") + "</div>"
+    + '<p style="color:var(--text-dim);font-size:0.85rem;text-align:center;">Vowels</p>'
+    + '<div class="jamo-grid">' + MH.JUNG.map(function (v) { return '<button class="jamo" data-j="' + v.j + '">' + v.j + "</button>"; }).join("") + "</div>";
+  pane.innerHTML = html;
+  const inp = el("hu-input");
+  const kbdBox = el("hu-kbd");
+  buildKeyboard(kbdBox, { target: inp, composed: true });
+  inp.addEventListener("input", function () {
+    const v = toHangul(inp.value);
+    if (v !== inp.value) inp.value = v;
+    el("hu-out").textContent = v;
+  });
+  pane.querySelectorAll(".jamo").forEach(function (b) {
+    b.addEventListener("click", function () {
+      const v = toHangul(inp.value + b.dataset.j);
+      inp.value = v;
+      el("hu-out").textContent = v;
+      if (ttsSupported() && speechSynthesis.cancel) { try { speechSynthesis.cancel(); } catch (e) {} }
+      speak(b.dataset.j);
+    });
+  });
+}
+
+/* --- Writing practice ------------------------------------------------ */
+function renderWritingTool() {
+  const pane = el("tool-pane");
+  const keys = MH.VOCAB_KEYS.slice();
+  pane.innerHTML = '<div class="lesson-prompt">Writing practice</div>'
+    + '<input type="text" class="lesson-input" id="w-input" placeholder="Write the word in Hangul...">'
+    + '<div id="w-kbd"></div>'
+    + '<div style="text-align:center;margin:12px 0;"><button class="lesson-btn check" id="w-check">Check</button> <button class="lesson-btn" id="w-new" style="background:transparent;border:1px solid var(--border);color:var(--text);">New word</button></div>'
+    + '<div class="conj-card" id="w-target"></div>';
+  const inp = el("w-input");
+  const kbdBox = el("w-kbd");
+  buildKeyboard(kbdBox, { target: inp, composed: true });
+  inp.addEventListener("input", function () {
+    const v = toHangul(inp.value);
+    if (v !== inp.value) inp.value = v;
+  });
+  let target = null;
+  function newWord() {
+    target = MH.vocab(pick(keys));
+    if (!target) return;
+    speak(target.h);
+    el("w-target").innerHTML = '<div class="conj-verb">' + target.h + "</div>"
+      + '<div style="color:var(--text-dim);">Meaning hidden - type it first, then check.</div>'
+      + '<div style="text-align:center;margin-top:8px;"><button class="mini-speak" id="w-speak" type="button">PLAY WORD</button></div>';
+    el("w-speak").addEventListener("click", function () { speak(target.h); });
+    inp.value = "";
+  }
+  el("w-new").addEventListener("click", newWord);
+  el("w-check").addEventListener("click", function () {
+    if (!target) return;
+    const got = inp.value.trim();
+    const right = got === target.h;
+    let msg = right ? "Correct!" : "Correct answer: " + target.h + " (" + (target.p || "") + ")";
+    el("w-target").innerHTML = '<div class="conj-verb">' + target.h + "</div>"
+      + '<div style="text-align:center;color:' + (right ? "var(--green-light)" : "var(--orange)") + ';font-weight:800;margin:8px 0;">' + msg + "</div>"
+      + '<div style="color:var(--text-dim);">You wrote: <b style="color:var(--text);">' + (got || "(empty)") + "</b></div>";
+  });
+  newWord();
+}
+
+/* =====================================================================
+   PROFILE PAGE
+   ===================================================================== */
+function renderProfile() {
+  touchStreak(); updateTopbarStats();
+  const grid = el("profile-grid");
+  const done = Object.keys(state.lessonCompletion).length;
+  const due = dueReviewCount();
+  const mastered = Object.keys(state.wordMastery).filter(function (k) { return state.wordMastery[k] >= 3; }).length;
+  const totalWords = MH.VOCAB_KEYS.length;
+  const pct = totalWords ? Math.round((mastered / totalWords) * 100) : 0;
+  const tier = state.placement ? state.placement.tier : null;
+  const tierInfo = tier ? (MH.TIERS.find(function (t) { return t.id === tier; }) || {}) : null;
+
+  grid.innerHTML = [
+    statCard("DAY STREAK", state.streak + "", "HARDEST"),
+    statCard("TOTAL XP", state.xp + "", "EARNED"),
+    statCard("LESSONS DONE", done + "/140", Math.round((done / 140) * 100) + "%"),
+    statCard("WORDS MASTERED", mastered + "/" + totalWords, pct + "%")
+  ].join("");
+
+  let plHtml = "";
+  if (tierInfo) plHtml = '<div class="profile-tile"><div class="pt-title">Placement level</div><div class="pt-value">Tier ' + tier + " - " + tierInfo.title + "</div></div>"
+    + '<div class="profile-tile"><div class="pt-title">Reviews due</div><div class="pt-value" style="color:var(--orange);">' + due + "</div></div>";
+  else plHtml = '<button class="profile-tile btn" id="pl-go"><div class="pt-title">No placement yet</div><div class="pt-value">Take the 5-minute test to skip ahead.</div></button>';
+
+  grid.innerHTML += '<div class="grid-inner">' + plHtml
+    + '<div class="profile-tile btn" id="cfg-hearts"><div class="pt-title">Daily hearts</div><div class="pt-value">' + state.hearts + " / " + state.maxHearts + "</div></div>"
+    + '<div class="profile-tile btn" id="cfg-sound"><div class="pt-title">Sound</div><div class="pt-value">' + (state.settings.tts ? "On" : "Off") + "</div></div>"
+    + '<div class="profile-tile btn" id="cfg-dark"><div class="pt-title">Dark mode</div><div class="pt-value">' + (state.settings.dark ? "On" : "Off") + "</div></div>"
+    + '<div class="profile-tile btn danger" id="cfg-reset"><div class="pt-title">Reset progress</div><div class="pt-value">Erase everything, start over.</div></div>'
+    + "</div>";
+
+  const plGo = el("pl-go");
+  if (plGo) plGo.addEventListener("click", startPlacement);
+  el("cfg-sound").addEventListener("click", function () {
+    state.settings = state.settings || {};
+    state.settings.tts = !state.settings.tts;
+    saveState(); renderProfile();
+  });
+  el("cfg-dark").addEventListener("click", function () {
+    state.settings = state.settings || {};
+    state.settings.dark = !state.settings.dark;
+    saveState(); applyTheme(); renderProfile();
+  });
+  el("cfg-reset").addEventListener("click", function () {
+    confirmBox("Reset all progress?", "XP, streak, hearts, word mastery, lesson completion and placement will be erased. This cannot be undone.", "Erase", function () {
+      state = Object.assign({}, DEFAULT_STATE);
+      saveState();
+      renderTree();
+    });
+  });
+}
+function statCard(label, big, sub) {
+  return '<div class="profile-stat"><div class="ps-label">' + label + "</div><div class=\"ps-value\">" + big + "</div><div class=\"ps-sub\">" + sub + "</div></div>";
+}
+
+/* =====================================================================
+   INIT  (showPage / bindNav live in part 2)
+   ===================================================================== */
+function init() {
+  applyTheme();
+  bindNav();
+  renderTree();
+}
+
+window.addEventListener("keydown", function (ev) {
+  if (ev.key === "Escape") { closeModal(); return; }
+  if (!el("modal").classList.contains("active")) return;
+  if (answered) return;
+  const body = el("modal-body");
+  if (body.querySelector(".lesson-option")) {
+    const opts = document.querySelectorAll("#modal-body .lesson-option");
+    const n = parseInt(ev.key, 10);
+    if (!isNaN(n) && n >= 1 && n <= opts.length) opts[n - 1].click();
+  } else if (body.querySelector("#type-input") && ev.key === "Enter") {
+    const c = el("check-btn");
+    if (c && !c.disabled) c.click();
+  }
+});
+
+if ("serviceWorker" in navigator && /^https?:/.test(location.protocol)) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  });
+}
+
+/* Distribute MH data - loaded as scripts before this file runs. */
+if (!window.MH || !MH.vocab || !MH.normaliseInput) { console.error("Data layer missing."); }
+
+init();</script>
+</body>
+</html>

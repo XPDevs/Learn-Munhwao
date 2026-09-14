@@ -1,0 +1,28 @@
+{
+  "name": "Munhwao Mastery - Learn North Korean",
+  "short_name": "Munhwao",
+  "description": "Learn Munhwao (North Korean) Korean offline: 140 lessons, flashcards, grammar, conjugations and more.",
+  "lang": "en",
+  "dir": "ltr",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#58cc02",
+  "categories": ["education", "books"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
