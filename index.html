@@ -81,6 +81,14 @@
   </div>
 </div>
 
+<!-- ===== PLACEMENT INTRO OVERLAY ===== -->
+<div class="modal-overlay" id="modal-intro">
+  <div class="modal" style="max-width:430px;height:auto;margin:auto;border-radius:16px;border:2px solid var(--border);box-shadow:0 8px 30px rgba(0,0,0,0.15);">
+    <div class="lesson-body" id="intro-body" style="min-height:auto;text-align:center;"></div>
+    <div class="lesson-footer" id="intro-footer" style="justify-content:center;flex-wrap:wrap;gap:10px;border-top:none;"></div>
+  </div>
+</div>
+
 <!-- ===== BOTTOM NAV ===== -->
 <nav class="bottom-nav" id="bottom-nav">
   <button class="bn-btn active" data-page="learn"><span class="bn-dot"></span>Learn</button>
@@ -125,7 +133,7 @@ const DEFAULT_STATE = {
   totalCorrect: 0,
   totalSeen: 0,
   dayXp: 0,
-  settings: { tts: true, rate: 0.85, dark: false }
+  settings: { tts: true, rate: 0.85, dark: true }
 };
 const STATE_KEY = "munhwao_mastery_v2";
 
@@ -139,8 +147,9 @@ function loadState() {
 }
 function saveState() { try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch (e) {} }
 
+function isDark() { return !(state.settings && state.settings.dark === false); }
 function applyTheme() {
-  if (state.settings && state.settings.dark) document.documentElement.setAttribute("data-theme", "dark");
+  if (isDark()) document.documentElement.setAttribute("data-theme", "dark");
   else document.documentElement.removeAttribute("data-theme");
 }
 
@@ -829,7 +838,14 @@ function renderTree() {
   touchStreak(); updateTopbarStats();
   renderBanner();
   const pb = el("placement-box");
-  if (pb) pb.classList.toggle("hidden", !!state.placement);
+  if (pb) {
+    const p = pb.querySelector("p");
+    const btn = el("banner-placement");
+    if (state.placement && p && btn) {
+      p.textContent = "Already placed at Tier " + state.placement.tier + ". You can retake the test anytime.";
+      btn.textContent = "Retake Placement Test";
+    }
+  }
   const tree = el("skill-tree");
 
   let html = "";
@@ -1255,6 +1271,28 @@ function completeLesson() {
    ===================================================================== */
 let placeIdx = 0, placeGood = 0;
 
+function openPlacementIntro() {
+  el("intro-body").innerHTML =
+    '<div class="placement-hero">'
+    + '<div class="banner-icon" style="margin:0 auto 16px;">?&nbsp;</div>'
+    + "<h2>Welcome to Munhwao Mastery</h2>"
+    + '<p style="color:var(--text-dim);line-height:1.5;margin:8px 0;">140 lessons across 20 tiers of North Korean (Munhwao). Already know some Korean? Take the 5-minute placement test to skip ahead, or start from lesson 1.</p>'
+    + "</div>";
+  el("intro-footer").innerHTML =
+    '<button class="lesson-btn continue" id="intro-go" style="width:100%;">Take the placement test</button>'
+    + '<button class="lesson-btn ghost" id="intro-skip" style="width:100%;">Skip - start at lesson 1</button>';
+  el("modal-intro").classList.add("active");
+  el("intro-go").addEventListener("click", function () {
+    el("modal-intro").classList.remove("active");
+    startPlacement();
+  });
+  el("intro-skip").addEventListener("click", function () {
+    el("modal-intro").classList.remove("active");
+    state.placementSeen = true;
+    saveState();
+  });
+}
+
 function startPlacement() {
   placeIdx = 0;
   placeGood = 0;
@@ -1643,7 +1681,7 @@ function renderProfile() {
   grid.innerHTML += '<div class="grid-inner">' + plHtml
     + '<div class="profile-tile btn" id="cfg-hearts"><div class="pt-title">Daily hearts</div><div class="pt-value">' + state.hearts + " / " + state.maxHearts + "</div></div>"
     + '<div class="profile-tile btn" id="cfg-sound"><div class="pt-title">Sound</div><div class="pt-value">' + (state.settings.tts ? "On" : "Off") + "</div></div>"
-    + '<div class="profile-tile btn" id="cfg-dark"><div class="pt-title">Dark mode</div><div class="pt-value">' + (state.settings.dark ? "On" : "Off") + "</div></div>"
+    + '<div class="profile-tile btn" id="cfg-dark"><div class="pt-title">Dark mode</div><div class="pt-value">' + (isDark() ? "On" : "Off") + "</div></div>"
     + '<div class="profile-tile btn danger" id="cfg-reset"><div class="pt-title">Reset progress</div><div class="pt-value">Erase everything, start over.</div></div>'
     + "</div>";
 
@@ -1656,7 +1694,7 @@ function renderProfile() {
   });
   el("cfg-dark").addEventListener("click", function () {
     state.settings = state.settings || {};
-    state.settings.dark = !state.settings.dark;
+    state.settings.dark = !isDark();
     saveState(); applyTheme(); renderProfile();
   });
   el("cfg-reset").addEventListener("click", function () {
@@ -1678,6 +1716,7 @@ function init() {
   applyTheme();
   bindNav();
   renderTree();
+  if (!state.placement && !state.placementSeen) openPlacementIntro();
 }
 
 window.addEventListener("keydown", function (ev) {
