@@ -177,6 +177,39 @@ function addXp(n) {
    falls back to the browser's Web Speech API. */
 function ttsSupported() { return typeof speechSynthesis !== "undefined" && typeof SpeechSynthesisUtterance !== "undefined"; }
 
+/* Munhwao pronunciation filter: rewrites any South Korean (Pyojuneo)
+   spelling to the North Korean standard before lookup/synthesis, so the
+   TTS always speaks Munhwao even for SK-typed text. This is an inlined
+   twin of nk-normalize.js at the repo root - keep the dictionary in sync
+   (search "SK_TO_MUNHWAO" in both files). */
+const SK_TO_MUNHWAO = [
+  ["컴퓨터", "콤퓨터"], ["휴대폰", "휴대전화"], ["핸드폰", "손전화"],
+  ["화장실", "위생실"], ["우체국", "체신소"], ["간호사", "간호원"], ["약국", "약방"],
+  ["세계", "셰계"], ["역사", "력사"], ["여학생", "녀학생"], ["여동생", "녀동생"],
+  ["여행", "려행"], ["여권", "려권"], ["여자", "녀자"], ["여성", "녀성"],
+  ["연습", "련습"], ["연필", "련필"], ["연락", "련락"], ["연결", "련결"],
+  ["유월", "류월"], ["유명", "류명"], ["유행", "류행"],
+  ["노동", "로동"], ["노인", "로인"], ["냉면", "랭면"]
+].sort(function (a, b) { return b[0].length - a[0].length; });
+function isHangulCh(ch) { return /[\uac00-\ud7af\u3131-\u3163]/.test(ch); }
+function munhwao(text) {
+  if (!text) return text;
+  let out = "", i = 0, n = text.length;
+  while (i < n) {
+    if (!isHangulCh(text.charAt(i))) { out += text.charAt(i); i++; continue; }
+    let j = i;
+    while (j < n && isHangulCh(text.charAt(j))) j++;
+    let span = text.slice(i, j);
+    SK_TO_MUNHWAO.forEach(function (e) {
+      const sk = e[0], nk = e[1];
+      if (span.indexOf(sk) >= 0) span = span.split(sk).join(nk);
+    });
+    out += span;
+    i = j;
+  }
+  return out.replace(/(^|[^가-힣])육(?=[^가-힣]|$)/g, "$1륙");
+}
+
 const NUM_TOKEN_LONG = ["아흔", "스물", "서른", "마흔", "쉰", "예순", "일흔", "여든", "하나", "둘", "셋", "넷", "다섯", "여섯", "일곱", "여덟", "아홉", "열", "령", "만", "천", "백", "십", "일", "이", "삼", "사", "오", "륙", "칠", "팔", "구", "영"]
   .sort(function (a, b) { return b.length - a.length; });
 
@@ -259,11 +292,12 @@ function speak(text, rate) {
   if (!text) return;
   if (!hasHangul(text)) return;
   if (!ttsSupported() || state.settings.tts === false) return;
-  const urls = audioPathsFor(text);
+  const key = munhwao(text);
+  const urls = audioPathsFor(key);
   if (urls) { playAudioUrls(urls); return; }
   try {
     speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
+    const u = new SpeechSynthesisUtterance(key);
     u.lang = "ko-KR";
     u.rate = typeof rate === "number" ? rate : (state.settings.rate || 0.85);
     speechSynthesis.speak(u);
@@ -880,6 +914,12 @@ function renderTree() {
       startLesson(id);
     });
   });
+  tree.querySelectorAll(".skill-skip").forEach(function (btn) {
+    btn.addEventListener("click", function (ev) {
+      ev.stopPropagation();
+      confirmSkipLesson(parseInt(btn.dataset.id, 10));
+    });
+  });
 }
 
 function skillCard(l, tier) {
@@ -897,6 +937,7 @@ function skillCard(l, tier) {
     + '<div class="skill-circle ' + cls + '">' + sym + "</div>"
     + '<div class="skill-label' + (unlocked ? "" : " locked") + '">' + l.title + "</div>"
     + meta
+    + (unlocked && !done ? '<button type="button" class="skill-skip" data-id="' + l.id + '" title="Skip this lesson">Skip</button>' : "")
     + "</div>";
 }
 
@@ -935,13 +976,41 @@ function openLessonModal(mode) {
     + '<div class="lesson-title">' + title + "</div>"
     + '<div class="lesson-progress-bar"><div class="lesson-progress-fill" id="progress-fill"></div></div>'
     + '<div class="lesson-hearts">HEART <span id="lesson-hearts">' + state.hearts + "</span></div>"
+    + (mode === "lesson" && curLesson ? '<button class="lesson-skip" id="lesson-skip" type="button" title="Skip this lesson">SKIP</button>' : "")
   );
   el("modal-close").addEventListener("click", quitLesson);
+  const skip = el("lesson-skip");
+  if (skip && curLesson) skip.addEventListener("click", function () { confirmSkipLesson(curLesson.id); });
 }
 
 function quitLesson() {
   closeModal();
   answered = false;
+}
+
+function confirmSkipLesson(id) {
+  const l = MH.byId(id);
+  const label = l ? '"' + l.title + '"' : "this lesson";
+  confirmBox("Skip lesson " + id + "?",
+    label + " will be marked as done and the next lesson unlocks. No XP is earned by skipping.",
+    "Skip lesson", function () { doSkipLesson(id); });
+}
+
+function doSkipLesson(id) {
+  stopAnySpeech();
+  const prev = state.lessonCompletion[id];
+  state.lessonCompletion[id] = {
+    stars: Math.max(prev ? prev.stars : 0, 1),
+    xp: prev ? prev.xp : 0,
+    date: new Date().toISOString(),
+    skipped: true
+  };
+  saveState();
+  updateTopbarStats();
+  if (curLesson && curLesson.id === id) curLesson = null;
+  closeModal();
+  renderTree();
+  toast("Lesson " + id + " skipped");
 }
 
 function speakIfAuto(txt) { speak(txt); }

@@ -210,6 +210,18 @@ input, select, textarea { font-family: inherit; }
   background: repeating-linear-gradient(90deg, var(--green) 0 14px, var(--green-light) 14px 20px);
 }
 .lesson-hearts { color: var(--red); font-weight: 900; font-size: 0.9rem; white-space: nowrap; }
+.lesson-skip {
+  background: var(--panel); border: 2px solid var(--border); color: var(--text-dim);
+  padding: 0 12px; height: 36px; border-radius: 18px; font-weight: 900; font-size: 0.75rem;
+  white-space: nowrap; cursor: pointer; margin-left: auto;
+}
+.lesson-skip:hover { border-color: var(--orange); color: var(--orange); }
+.skill-skip {
+  display: inline-block; background: none; border: 1px solid var(--border); color: var(--text-dim);
+  font-size: 0.55rem; font-weight: 800; padding: 0 6px; margin-top: 2px;
+  border-radius: 8px; cursor: pointer; text-transform: uppercase;
+}
+.skill-skip:hover { border-color: var(--orange); color: var(--orange); }
 
 .lesson-body { padding: 26px 28px 10px; flex: 1; display: flex; flex-direction: column; align-items: center; width: 100%; }
 
