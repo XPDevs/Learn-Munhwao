@@ -264,8 +264,8 @@ MH.GRAMMAR_REF = [
   { title: "Munhwao spelling differences", lines: [
     "Initial ㄴ kept: 녀자 (woman), 년 (year).",
     "Initial ㄹ kept: 려행 (travel), 려권 (passport), 로동 (labor).",
-    "Six = 륙; June = 류월.",
-    "Rank: 랭면 (cold noodles) vs South 냉면.",
+    "Six = 륙 (ryuk); June = 유월 (yu-wol).",
+    "Food: 랭면 (cold noodles) - always with the R sound.",
     "Computer = 콤퓨터 / 전자계산기. TV = 텔레비죤. Radio = 라지오."
   ]}
 ];

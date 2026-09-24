@@ -10,17 +10,17 @@ window.MH = window.MH || {};
 /* ---- Jamo tables --------------------------------------------------- */
 
 MH.CHO = [
-  { j: "ㄱ", p: "g/k",   en: "giyeok",    sound: "g as in 'go'; k when final" },
-  { j: "ㄲ", p: "kk",    en: "ssanggiyeok", sound: "doubled, tense g" },
+  { j: "ㄱ", p: "g/k",   en: "gieuk",     sound: "g as in 'go'; k when final" },
+  { j: "ㄲ", p: "kk",    en: "ssanggieuk", sound: "doubled, tense g" },
   { j: "ㄴ", p: "n",     en: "nieun",     sound: "n as in 'noon'" },
-  { j: "ㄷ", p: "d/t",   en: "digeut",    sound: "d as in 'door'; t when final" },
-  { j: "ㄸ", p: "tt",    en: "ssangdigeut", sound: "doubled, tense d" },
+  { j: "ㄷ", p: "d/t",   en: "dieut",     sound: "d as in 'door'; t when final" },
+  { j: "ㄸ", p: "tt",    en: "ssangdieut", sound: "doubled, tense d" },
   { j: "ㄹ", p: "r/l",   en: "rieul",     sound: "r between vowels (tapped); l when final" },
   { j: "ㅁ", p: "m",     en: "mieum",     sound: "m as in 'moon'" },
   { j: "ㅂ", p: "b/p",   en: "bieup",     sound: "b at word start; p when final" },
   { j: "ㅃ", p: "pp",    en: "ssangbieup", sound: "doubled, tense b" },
-  { j: "ㅅ", p: "s",     en: "siot",      sound: "s as in 'sun' (sh before i/ㅣ)" },
-  { j: "ㅆ", p: "ss",    en: "ssangsiot",  sound: "doubled, tense s" },
+  { j: "ㅅ", p: "s",     en: "sieut",     sound: "s as in 'sun' (sh before i/ㅣ)" },
+  { j: "ㅆ", p: "ss",    en: "ssangsieut", sound: "doubled, tense s" },
   { j: "ㅇ", p: "(none)",en: "ieung",     sound: "silent at syllable start; ng when final" },
   { j: "ㅈ", p: "j",     en: "jieut",     sound: "j as in 'jam'" },
   { j: "ㅉ", p: "jj",    en: "ssangjieut", sound: "doubled, tense j" },

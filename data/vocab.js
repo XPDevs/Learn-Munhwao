@@ -1,8 +1,8 @@
 /* =====================================================================
    MUNHWAE VOCABULARY DATABASE  (Munhwao Mastery)
    English -> North Korean Standard (Munhwao) only. 350+ curated entries,
-   each with romanisation, category, North-South difference notes and a
-   real sample sentence. Zero South Korean (Pyojuneo) vocabulary.
+   each with romanisation, category, Munhwao usage notes and a real
+   sample sentence. Pure Munhwao - no South Korean (Pyojuneo) is taught.
    ===================================================================== */
 "use strict";
 window.MH = window.MH || {};
@@ -10,7 +10,7 @@ window.MH = window.MH || {};
 MH.VOCAB = {
 
   /* ---------- BASICS ---------- */
-  vb_yes:    { h:"네", p:"ne", e:"yes (spoken)", c:"basics", n:"In the North, 'ne' is the everyday yes word; 'ye' is the South Korean spelling. Keep the n- sound.", s:"네, 알겠습니다. = Yes, I understand." },
+  vb_yes:    { h:"네", p:"ne", e:"yes (spoken)", c:"basics", n:"Munhwao yes: 네, always with the n- sound.", s:"네, 알겠습니다. = Yes, I understand." },
   vb_no:     { h:"아니요", p:"a-ni-yo", e:"no (spoken)", c:"basics", s:"아니요, 아닙니다. = No, it is not." },
   vb_what:   { h:"무엇", p:"mu-eot", e:"what", c:"basics", s:"이것은 무엇입니까? = What is this?" },
   vb_who:    { h:"누구", p:"nu-gu", e:"who", c:"basics", s:"그는 누구입니까? = Who is he?" },
@@ -31,7 +31,7 @@ MH.VOCAB = {
   vb_people_p: { h:"사람", p:"sa-ram", e:"person / people", c:"basics", s:"저 사람은 누구입니까? = Who is that person?" },
 
   /* ---------- NUMBERS (NATIVE - counting objects) ---------- */
-  n_0:  { h:"령", p:"ryeong", e:"zero", c:"numbers_native", n:"North Korea writes zero as 령. The South Korean '공/gong' appears only in sports scores in the North.", s:"영하 5도 = minus 5 degrees" },
+  n_0:  { h:"령", p:"ryeong", e:"zero", c:"numbers_native", n:"Zero is 령 (ryeong) in Munhwao. 공 appears only in sports scores.", s:"영하 5도 = minus 5 degrees" },
   n_1:  { h:"하나", p:"ha-na", e:"one (native)", c:"numbers_native", s:"하나 둘 셋! = One, two, three!" },
   n_2:  { h:"둘", p:"dul", e:"two (native)", c:"numbers_native", s:"사과 둘 = two apples" },
   n_3:  { h:"셋", p:"set", e:"three (native)", c:"numbers_native", s:"명 셋 = three people" },
@@ -60,7 +60,7 @@ MH.VOCAB = {
   s_3:  { h:"삼", p:"sam", e:"three (Sino-Korean)", c:"numbers_sino", s:"삼 일 = the 3rd / three days" },
   s_4:  { h:"사", p:"sa", e:"four (Sino-Korean)", c:"numbers_sino", s:"사 원 = four won" },
   s_5:  { h:"오", p:"o", e:"five (Sino-Korean)", c:"numbers_sino", s:"오 일 = five days" },
-  s_6:  { h:"륙", p:"ryuk", e:"six (Sino-Korean)", c:"numbers_sino", n:"North Korea keeps the initial R/L sound: 륙 not 육. East Coast normal speech rhythm.", s:"륙 월 = June" },
+  s_6:  { h:"륙", p:"ryuk", e:"six (Sino-Korean)", c:"numbers_sino", n:"Munhwao keeps the initial R/L sound: six = 륙 (ryuk).", s:"륙십 = 60 (sixty, Sino)" },
   s_7:  { h:"칠", p:"chil", e:"seven (Sino-Korean)", c:"numbers_sino", s:"칠 원 = seven won" },
   s_8:  { h:"팔", p:"pal", e:"eight (Sino-Korean)", c:"numbers_sino", s:"팔 일 = eight days" },
   s_9:  { h:"구", p:"gu", e:"nine (Sino-Korean)", c:"numbers_sino", s:"구 원 = nine won" },
@@ -74,9 +74,9 @@ MH.VOCAB = {
   /* ---------- PRONOUNS ---------- */
   pr_i:    { h:"나", p:"na", e:"I (plain)", c:"pronouns", s:"나는 학생입니다. = I am a student." },
   pr_i_hm: { h:"저", p:"jeo", e:"I (humble/formal)", c:"pronouns", s:"저는 리동무입니다. = I am Comrade Ri." },
-  pr_we:   { h:"우리", p:"u-ri", e:"we / our (also 'my' in NK)", c:"pronouns", n:"North Koreans say '우리' for 'my' too: 우리 나라 = our country (meaning my country).", s:"우리는 인민노동자입니다. = We are working people." },
+  pr_we:   { h:"우리", p:"u-ri", e:"we / our (also 'my' in NK)", c:"pronouns", n:"North Koreans say '우리' for 'my' too: 우리 나라 = our country (meaning my country).", s:"우리는 인민로동자입니다. = We are working people." },
   pr_you:  { h:"너", p:"neo", e:"you (plain, to a close friend)", c:"pronouns", s:"너는 동무니까. = You are a friend." },
-  pr_you_f:{ h:"당신", p:"dang-sin", e:"you (formal)", c:"pronouns", n:"당신 is genuinely used in the North for polite 'you' toward someone familiar, more than in the South.", s:"당신은 어떻게 지내십니까? = How are you doing?" },
+  pr_you_f:{ h:"당신", p:"dang-sin", e:"you (formal)", c:"pronouns", n:"당신 is used in the North for polite 'you' toward someone familiar.", s:"당신은 어떻게 지내십니까? = How are you doing?" },
   pr_he:   { h:"그", p:"geu", e:"he / that (determiner)", c:"pronouns", s:"그는 동무입니다. = He is a comrade." },
   pr_she:  { h:"그녀", p:"geu-nyeo", e:"she", c:"pronouns", s:"그녀는 선생입니다. = She is a teacher." },
   pr_this: { h:"이것", p:"i-geot", e:"this (thing)", c:"pronouns", s:"이것은 무엇입니까? = What is this thing?" },
@@ -93,7 +93,7 @@ MH.VOCAB = {
   g_anyong_morning:{ h:"안녕히 주무셨습니까", p:"ahn-nyuhng-hi ju-mu-syeosse-seum-ni-kka", e:"Did you sleep well? (morning polite)", c:"greetings", n:"A common morning greeting in homes: literally 'Have you slept peacefully?'", s:"안녕히 주무셨습니까? 네, 잘 잤습니다. = Did you sleep well? Yes." },
   g_goodbye: { h:"안녕히 가십시오", p:"ahn-nyuhng-hi ga-sim-si-o", e:"Goodbye (to someone leaving)", c:"greetings", n:"'Go peacefully.' Said when you stay and the other person leaves.", s:"안녕히 가십시오! = Goodbye, go safely!" },
   g_goodbye2:{ h:"안녕히 계십시오", p:"ahn-nyuhng-hi gye-sim-si-o", e:"Goodbye (to someone staying)", c:"greetings", n:"'Stay peacefully.' Said when YOU leave and the other stays.", s:"안녕히 계십시오! = Goodbye, take care!" },
-  g_thanks:  { h:"고맙습니다", p:"go-map-seum-ni-da", e:"Thank you", c:"greetings", n:"The North's standard thank-you. South Koreans prefer 감사합니다 but Munhwao uses 고맙습니다.", s:"고맙습니다! = Thank you!" },
+  g_thanks:  { h:"고맙습니다", p:"go-map-seum-ni-da", e:"Thank you", c:"greetings", n:"The Munhwao standard thank-you.", s:"고맙습니다! = Thank you!" },
   g_thanks_hm:{h:"대단히 고맙습니다", p:"dae-dan-hi go-map-seum-ni-da", e:"Thank you very much", c:"greetings", s:"도와주셔서 대단히 고맙습니다. = Thank you very much for helping." },
   g_sorry:   { h:"미안합니다", p:"mi-an-ham-ni-da", e:"I'm sorry", c:"greetings", s:"미안합니다, 늦었습니다. = Sorry, I am late." },
   g_excuse:  { h:"실례합니다", p:"sil-lye-ham-ni-da", e:"Excuse me", c:"greetings", s:"실례합니다, 길을 묻겠습니다. = Excuse me, I want to ask the way." },
@@ -103,17 +103,16 @@ MH.VOCAB = {
 
   /* ---------- PEOPLE ---------- */
   p_man:    { h:"남자", p:"nam-ja", e:"man", c:"people", s:"저 남자는 누구입니까? = Who is that man?" },
-  p_woman:  { h:"녀자", p:"nyeo-ja", e:"woman", c:"people", n:"North keeps the initial N: 녀자, not 여자 as in the South.", s:"녀자 셋이 왔습니다. = Three women came." },
+  p_woman:  { h:"녀자", p:"nyeo-ja", e:"woman", c:"people", n:"Munhwao keeps the initial N: 녀자 (nyeo-ja).", s:"녀자 셋이 왔습니다. = Three women came." },
   p_child:  { h:"어린이", p:"eo-ri-ni", e:"child", c:"people", s:"어린이는 여기 앉으십시오. = Children, sit here." },
   p_student:{ h:"학생", p:"hak-saeng", e:"student", c:"people", s:"나는 학생입니다. = I am a student." },
   p_teacher:{ h:"선생", p:"seon-saeng", e:"teacher / Mr./Mrs.", c:"people", s:"선생님, 질문이 있습니다. = Teacher, I have a question." },
-  p_friend: { h:"동무", p:"dong-mu", e:"comrade / friend", c:"people", n:"The North's word for friend! '동무' is used everyday. The South's '친구' is limited to close friends.", s:"그는 나의 동무입니다. = He is my friend." },
-  p_friend2:{ h:"친구", p:"chin-gu", e:"friend (quotidian loophole)", c:"people", n:"Also understood in the North for a close friend, especially among young people.", s:"우리는 오래된 친구입니다. = We are old friends." },
-  p_worker: { h:"로동자", p:"ro-dong-ja", e:"worker / laborer", c:"people", n:"North keeps 로 (ro): 로동자 not 노동자.", s:"로동자는 착실합니다. = The worker is diligent." },
-  p_official:{h:"일군", p:"il-gun", e:"official / cadre", c:"people", n:"A key North Korean word meaning state official or cadre, different from South Korean ilkkun.", s:"일군들은 인민을 위해 일합니다. = Officials work for the people." },
+  p_friend: { h:"동무", p:"dong-mu", e:"comrade / friend", c:"people", n:"The everyday Munhwao word for friend - 동무 (dong-mu).", s:"그는 나의 동무입니다. = He is my friend." },
+  p_worker: { h:"로동자", p:"ro-dong-ja", e:"worker / laborer", c:"people", n:"Munhwao keeps 로 (ro): 로동자 (worker).", s:"로동자는 착실합니다. = The worker is diligent." },
+  p_official:{h:"일군", p:"il-gun", e:"official / cadre", c:"people", n:"A key North word meaning state official or cadre.", s:"일군들은 인민을 위해 일합니다. = Officials work for the people." },
   p_doctor: { h:"의사", p:"ui-sa", e:"doctor", c:"people", s:"의사가 아픈 사람을 봅니다. = The doctor examines the sick person." },
   p_soldier:{ h:"군인", p:"gun-in", e:"soldier", c:"people", s:"군인은 국경을 지킵니다. = The soldier guards the border." },
-  p_nk_name:{ h:"조선", p:"jo-seon", e:"Korea (North)", c:"people", n:"The North calls the country 조선 and the language 조선어. The South calls it 한국.", s:"조선은 아름다운 나라입니다. = North Korea is a beautiful country." },
+  p_nk_name:{ h:"조선", p:"jo-seon", e:"Korea (North)", c:"people", n:"Munhwao calls the country 조선 and the language 조선어.", s:"조선은 아름다운 나라입니다. = North Korea is a beautiful country." },
   p_nk_people:{h:"조선사람", p:"jo-seon-sa-ram", e:"North Korean person", c:"people", s:"저는 조선사람입니다. = I am a North Korean." },
 
   /* ---------- FAMILY ---------- */
@@ -159,9 +158,9 @@ MH.VOCAB = {
   f_side: { h:"반찬", p:"ban-chan", e:"side dish / banchan", c:"food", s:"반찬이 많습니다. = There are many side dishes." },
   f_meat: { h:"고기", p:"go-gi", e:"meat", c:"food", s:"고기를 먹습니다. = I eat meat." },
   f_porknoodles:{h:"국수", p:"guk-su", e:"noodles / kugsu", c:"food", n:"Pyongyang's famous dish is 평양랭면 (Pyongyang cold noodles) built on this word.", s:"평양랭면이 유명합니다. = Pyongyang cold noodles are famous." },
-  f_noodles:{h:"랭면", p:"raeng-myeon", e:"cold noodles", c:"food", n:"North spelling: 랭면 (raeng-myeon); the South writes 냉면.", s:"랭면에 겨자를 넣습니다. = I put mustard in the cold noodles." },
+  f_noodles:{h:"랭면", p:"raeng-myeon", e:"cold noodles", c:"food", n:"Northern spelling: 랭면 (raeng-myeon) - cold noodles with the R.", s:"랭면에 겨자를 넣습니다. = I put mustard in the cold noodles." },
   f_fish: { h:"생선", p:"saeng-seon", e:"fish (food)", c:"food", s:"생선을 굽습니다. = I grill the fish." },
-  f_veg:  { h:"남새", p:"nam-sae", e:"vegetables", c:"food", n:"The North's word for vegetables is 남새; the South uses 채소.", s:"남새는 건강에 좋습니다. = Vegetables are good for health." },
+  f_veg:  { h:"남새", p:"nam-sae", e:"vegetables", c:"food", n:"The Munhwao word for vegetables is 남새.", s:"남새는 건강에 좋습니다. = Vegetables are good for health." },
   f_veg2: { h:"야채", p:"ya-chae", e:"vegetables (understood)", c:"food", s:"야채를 씻습니다. = I wash the vegetables." },
   f_apple:{ h:"사과", p:"sa-gwa", e:"apple", c:"food", s:"사과를 먹습니다. = I eat an apple." },
   f_fruit:{ h:"과일", p:"gwa-il", e:"fruit", c:"food", s:"과일이 달콤합니다. = The fruit is sweet." },
@@ -183,7 +182,7 @@ MH.VOCAB = {
   c_clothes:{h:"옷", p:"ot", e:"clothes", c:"home", s:"옷을 입습니다. = I put on clothes." },
   c_shoes:{ h:"신발", p:"sin-bal", e:"shoes", c:"home", s:"신발이 작습니다. = The shoes are small." },
   c_socks:{ h:"양말", p:"yang-mal", e:"socks", c:"home", s:"양말을 신습니다. = I put on socks." },
-  c_dress:{ h:"치마저고리", p:"chi-ma-jeo-go-ri", e:"chima-jogori (traditional dress)", c:"home", n:"The North Korean traditional women's dress is 한복/조선옷; everyday girls wear the chima-jogori.", s:"녀자는 치마저고리를 입습니다. = The woman wears a chima-jogori." },
+  c_dress:{ h:"치마저고리", p:"chi-ma-jeo-go-ri", e:"chima-jogori (traditional dress)", c:"home", n:"The traditional women's dress: 치마저고리, worn with a 조선옷 look for festivals.", s:"녀자는 치마저고리를 입습니다. = The woman wears a chima-jogori." },
   c_shirt:{ h:"저고리", p:"jeo-go-ri", e:"upper garment / jacket", c:"home", s:"저고리를 입습니다. = I wear a jacket." },
   c_hat:  { h:"모자", p:"mo-ja", e:"hat", c:"home", s:"모자를 씁니다. = I wear a hat." },
 
@@ -191,7 +190,7 @@ MH.VOCAB = {
   h_home:  { h:"집", p:"jip", e:"house / home", c:"home", s:"집이 넓습니다. = The house is spacious." },
   h_room:  { h:"방", p:"bang", e:"room", c:"home", s:"방이 조용합니다. = The room is quiet." },
   h_kitchen:{h:"부엌", p:"bu-eok", e:"kitchen", c:"home", s:"부엌에서 요리합니다. = I cook in the kitchen." },
-  h_toilet:{ h:"위생실", p:"wi-saeng-sil", e:"toilet / washroom", c:"home", n:"The Munhwao term for a public toilet; South Korea says 화장실.", s:"위생실이 어디에 있습니까? = Where is the toilet?" },
+  h_toilet:{ h:"위생실", p:"wi-saeng-sil", e:"toilet / washroom", c:"home", n:"The Munhwao term for a public toilet: 위생실.", s:"위생실이 어디에 있습니까? = Where is the toilet?" },
   h_door:  { h:"문", p:"mun", e:"door", c:"home", s:"문을 닫습니다. = I close the door." },
   h_window:{ h:"창문", p:"chang-mun", e:"window", c:"home", s:"창문을 엽니다. = I open the window." },
   h_bed:   { h:"침대", p:"chim-dae", e:"bed", c:"home", s:"침대에서 잠을 잡니다. = I sleep in the bed." },
@@ -200,7 +199,7 @@ MH.VOCAB = {
   h_mirror:{ h:"거울", p:"geo-ul", e:"mirror", c:"home", s:"거울로 얼굴을 봅니다. = I look at my face in the mirror." },
   h_floor_heat:{h:"온돌", p:"on-dol", e:"ondol (floor heating)", c:"home", n:"Korean homes use under-floor heating called 온돌. The North is famous for it too.", s:"온돌이 따뜻합니다. = The ondol is warm." },
   h_stove:{ h:"난로", p:"nal-lo", e:"stove / heater", c:"home", s:"난로가 뜨겁습니다. = The stove is hot." },
-  h_elevator:{h:"승강기", p:"seung-gang-gi", e:"elevator", c:"home", n:"North Korean word for elevator; the South uses 엘리베이터.", s:"승강기로 위층에 갑니다. = I go upstairs by elevator." },
+  h_elevator:{h:"승강기", p:"seung-gang-gi", e:"elevator", c:"home", n:"The Munhwao word for elevator: 승강기.", s:"승강기로 위층에 갑니다. = I go upstairs by elevator." },
   h_key:   { h:"열쇠", p:"yeol-soe", e:"key", c:"home", s:"열쇠가 문에 있습니까? = Is the key in the door?" },
   h_clock: { h:"시계", p:"si-gye", e:"clock / watch", c:"home", s:"시계가 정확합니다. = The watch is accurate." },
 
@@ -220,13 +219,13 @@ MH.VOCAB = {
   city_uni:{h:"대학", p:"dae-hak", e:"university / college", c:"city", s:"김일성종합대학은 유명합니다. = Kim Il-sung University is famous." },
   city_post:{h:"체신소", p:"che-sin-so", e:"post office", c:"city", s:"체신소에서 편지를 냅니다. = I send a letter at the post office." },
   city_bank:{h:"은행", p:"eun-haeng", e:"bank", c:"city", s:"은행에 갑니다. = I go to the bank." },
-  city_hotel:{h:"려관", p:"ryeo-gwan", e:"hotel", c:"city", n:"North Korean for hotel: 려관. The South writes 여관.", s:"려관이 아늑합니다. = The hotel is cozy." },
+  city_hotel:{h:"려관", p:"ryeo-gwan", e:"hotel", c:"city", n:"Munhwao for hotel: 려관 (ryeo-gwan).", s:"려관이 아늑합니다. = The hotel is cozy." },
   city_museum:{h:"박물관", p:"bang-mul-gwan", e:"museum", c:"city", s:"조선중앙력사박물관에 갔습니다. = I went to the Korean Central History Museum." },
 
   /* ---------- TRANSPORT ---------- */
   t_car:    { h:"자동차", p:"ja-dong-cha", e:"car / automobile", c:"city", s:"자동차가 빠릅니다. = The car is fast." },
   t_bus:    { h:"버스", p:"beo-seu", e:"bus", c:"city", s:"버스를 탑니다. = I take the bus." },
-  t_metro:  { h:"지하철", p:"ji-ha-cheol", e:"subway / metro", c:"city", n:"Pyongyang has one of the world's deepest metro systems, built in the 1970s.", s:"지하철로 여행합니다. = I travel by metro." },
+  t_metro:  { h:"지하철", p:"ji-ha-cheol", e:"subway / metro", c:"city", n:"Pyongyang has one of the world's deepest metro systems, built in the 1970s.", s:"지하철로 려행합니다. = I travel by metro." },
   t_tram:   { h:"전차", p:"jeon-cha", e:"tram / trolley", c:"city", s:"전차를 기다립니다. = I wait for the tram." },
   t_train:  { h:"기차", p:"gi-cha", e:"train", c:"city", s:"기차는 평양에서 남포까지 갑니다. = The train goes from Pyongyang to Nampho." },
   t_plane:  { h:"비행기", p:"bi-haeng-gi", e:"aeroplane", c:"city", s:"비행기는 하늘을 납니다. = The plane flies in the sky." },
@@ -234,7 +233,7 @@ MH.VOCAB = {
   t_bike:   { h:"자전거", p:"ja-jeon-geo", e:"bicycle", c:"city", s:"자전거를 타고 일합니다. = I ride a bicycle to work." },
   t_taxi:   { h:"택시", p:"taek-si", e:"taxi", c:"city", s:"택시를 잡습니다. = I hail a taxi." },
   t_ticket: { h:"차표", p:"cha-pyo", e:"ticket", c:"city", s:"차표를 삽니다. = I buy a ticket." },
-  t_travel: { h:"려행", p:"ryeo-haeng", e:"travel / trip", c:"city", n:"North spelling: 려행. The South writes 여행.", s:"려행을 즐깁니다. = I enjoy the trip." },
+  t_travel: { h:"려행", p:"ryeo-haeng", e:"travel / trip", c:"city", n:"Northern spelling: 려행 (ryeo-haeng).", s:"려행을 즐깁니다. = I enjoy the trip." },
   t_road:   { h:"길", p:"gil", e:"road / path", c:"city", s:"이 길은 어디로 갑니까? = Where does this road go?" },
   t_station:{ h:"역", p:"yeok", e:"station", c:"city", s:"평양역은 중심에 있습니다. = Pyongyang Station is in the centre." },
   t_stop:   { h:"정류소", p:"jeong-nyu-so", e:"bus stop", c:"city", s:"정류소에서 버스를 기다립니다. = I wait for the bus at the stop." },
@@ -263,12 +262,12 @@ MH.VOCAB = {
   tm_half:{ h:"반", p:"ban", e:"thirty / half past", c:"time_days", s:"세 시 반 = half past three (3:30)." },
   tm_week:{ h:"주일", p:"ju-il", e:"week", c:"time_days", s:"두 주일 후에 옵니다. = He comes after two weeks." },
   tm_year:{ h:"해", p:"hae", e:"year (native)", c:"time_days", s:"해가 바뀌었습니다. = The year turned over." },
-  tm_year_sino:{h:"년", p:"nyeon", e:"year (Sino)", c:"time_days", n:"North keeps the N: 년. e.g. 주체 115 = Juche year 115.", s:"새 년입니다. = It is the new year." },
-  tm_month_sino:{h:"월", p:"wol", e:"month", c:"time_days", s:"이 월 = the 2nd month, February." },
+  tm_year_sino:{h:"년", p:"nyeon", e:"year (Sino)", c:"time_days", n:"Munhwao keeps the N: 년 (nyeon).", s:"새해가 되었습니다. = The new year has begun." },
+  tm_month_sino:{h:"월", p:"wol", e:"month", c:"time_days", s:"이월 = February (the 2nd month)." },
   tm_mon:{ h:"월요일", p:"wol-yo-il", e:"Monday", c:"time_days", s:"월요일에 일합니다. = I work on Monday." },
   tm_tue:{ h:"화요일", p:"hwa-yo-il", e:"Tuesday", c:"time_days", s:"화요일에 공부합니다. = I study on Tuesday." },
   tm_wed:{ h:"수요일", p:"su-yo-il", e:"Wednesday", c:"time_days", s:"수요일이 중간입니다. = Wednesday is the middle." },
-  tm_thu:{ h:"목요일", p:"mok-yo-il", e:"Thursday", c:"time_days", s:"목요일에 여행합니다. = I travel on Thursday." },
+  tm_thu:{ h:"목요일", p:"mok-yo-il", e:"Thursday", c:"time_days", s:"목요일에 려행합니다. = I travel on Thursday." },
   tm_fri:{ h:"금요일", p:"geum-yo-il", e:"Friday", c:"time_days", s:"금요일이 재미있습니다. = Friday is fun." },
   tm_sat:{ h:"토요일", p:"to-yo-il", e:"Saturday", c:"time_days", s:"토요일에는 놉니다. = On Saturdays we play." },
   tm_sun:{ h:"일요일", p:"ir-yo-il", e:"Sunday", c:"time_days", s:"일요일에 쉽니다. = I rest on Sunday." },
@@ -285,7 +284,7 @@ MH.VOCAB = {
   col_yellow:{ h:"노랗다", p:"no-ra-ta", e:"to be yellow", c:"colors", s:"노란 꽃이 예쁩니다. = The yellow flower is pretty." },
   col_white: { h:"희다", p:"hui-da", e:"to be white", c:"colors", s:"조선옷은 흰색입니다. = Korean dress is white." },
   col_black: { h:"검다", p:"geom-da", e:"to be black", c:"colors", s:"검은 신발을 신습니다. = I wear black shoes." },
-  col_green: { h:"록색", p:"rok-saek", e:"green (color)", c:"colors", n:"North spelling: 록색 (rok-saek); the South writes 녹색.", s:"록색 남새 = green vegetables" },
+  col_green: { h:"록색", p:"rok-saek", e:"green (color)", c:"colors", n:"Northern spelling: 록색 (rok-saek).", s:"록색 남새 = green vegetables" },
   col_color:{ h:"색", p:"saek", e:"color", c:"colors", s:"무슨 색입니까? = What color is it?" },
   col_bright:{h:"밝다", p:"bal-tta", e:"to be bright", c:"colors", s:"방이 밝습니다. = The room is bright." },
 
@@ -423,7 +422,7 @@ MH.VOCAB = {
   w_lesson:{ h:"수업", p:"su-eop", e:"class / lesson", c:"work_school", s:"수업을 듣습니다. = I attend class." },
   w_homework:{h:"숙제", p:"suk-je", e:"homework", c:"work_school", s:"숙제를 합니다. = I do homework." },
   w_exam:{ h:"시험", p:"si-heom", e:"exam / test", c:"work_school", s:"시험을 봅니다. = I take an exam." },
-  w_break:{ h:"쉬는 시간", p:"swi-neun si-gan", e:"break time", c:"work_school", s:"쉬는 시간에 친구를 만납니다. = I meet my friend at break." },
+  w_break:{ h:"쉬는 시간", p:"swi-neun si-gan", e:"break time", c:"work_school", s:"쉬는 시간에 동무를 만납니다. = I meet my friend at break." },
   w_paper:{ h:"종이", p:"jong-i", e:"paper", c:"work_school", s:"종이에 씁니다. = I write on paper." },
   w_pencil:{h:"연필", p:"yeon-pil", e:"pencil", c:"work_school", s:"연필로 씁니다. = I write with a pencil." },
   w_book:{ h:"책", p:"chaek", e:"book", c:"work_school", s:"책을 읽습니다. = I read a book." },

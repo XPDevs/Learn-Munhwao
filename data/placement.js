@@ -13,7 +13,7 @@ MH.PLACEMENT = [
   { t: "mc", q: "Which letter makes the N sound?", opt: ["ㄱ", "ㄴ", "ㅁ", "ㅅ"], ans: 1, note: "ㄴ (nieun) is the N: 나 = na." },
   { t: "mc", q: "How do you read this block? 가", opt: ["ga", "ka", "ja", "sa"], ans: 0, note: "ㄱ+ㅏ = ga." },
   { t: "mc", q: "How do you read this block? 강", opt: ["gang", "gat", "gam", "gar"], ans: 0, note: "The final ㅇ is always 'ng'." },
-  { t: "mc", q: "What is the North Korean native word for zero?", opt: ["령", "공", "영", "백"], ans: 0, note: "In the North, zero is 령 (ryeong). The South's 공 appears only in sports scores." },
+  { t: "mc", q: "What is the North Korean native word for zero?", opt: ["령", "공", "영", "백"], ans: 0, note: "Zero is 령 (ryeong) in Munhwao; 공 appears only in sports scores." },
   { t: "mc", q: "Which is the native number for 5?", opt: ["오", "다섯", "삼", "일곱"], ans: 1, note: "다섯 (da-seot) is native five; 오 is Sino." },
 
   /* ---- elementary 6-11 -------------------------------------------------- */
@@ -33,11 +33,11 @@ MH.PLACEMENT = [
   { t: "mc", q: "How do you politely ask someone to help you?", opt: ["도와주십시오", "도와주세요", "가십시오", "앉으십시오"], ans: 0, note: "줍니다 -> 주십시오: please give (help) to me." },
 
   /* ---- advanced 18-23 ----------------------------------------------------- */
-  { t: "mc", q: "The North keeps the initial N/R that the South drops. Which IS Northern?", opt: ["녀자", "여자", "여행", "육"], ans: 0, note: "녀자 (woman) keeps the N; the South writes 여자." },
+  { t: "mc", q: "Which word is the Northern (Munhwao) spelling?", opt: ["녀자", "여자", "여행", "육"], ans: 0, note: "녀자 (woman) keeps the N: Munhwao preserves the sound." },
   { t: "mc", q: "'Because it is cold, I don't go' - pick the correct learner form.", opt: ["추워서 안 갑니다", "춥고 갑니다", "추워서 갑니다", "추울지만 갑니다"], ans: 0, note: "춥다 -> 추워서 (because cold) + 안 갑니다 (don't go)." },
   { t: "mc", q: "The North Korean word for 'travel' is...", opt: ["려행", "여행", "여행사", "료행"], ans: 0, note: "려행 (ryeo-haeng) keeps the R." },
   { t: "mc", q: "Which sentence means 'As for me, I am not a student'?", opt: ["저는 학생이 아닙니다", "저는 학생입니다", "저는 학생입니다 아니", "저는 학생이 아저씨입니다"], ans: 0, note: "아닙니다 negates: 학생이 아닙니다." },
-  { t: "mc", q: "What does 'Inside the motive' - no. Which is 'Please don't go'?", opt: ["가지 마십시오", "가십시오", "가고 싶습니다", "가는 가십시오"], ans: 0, note: "-지 마십시오 is the polite negative command." },
+  { t: "mc", q: "Which sentence means 'Please don't go'?", opt: ["가지 마십시오", "가십시오", "가고 싶습니다", "가는 가십시오"], ans: 0, note: "-지 마십시오 is the polite negative command." },
   { t: "mc", q: "The ideology centered on self-reliance that the North promotes is called...", opt: ["주체", "주작", "자주", "주민"], ans: 0, note: "주체 (Juche) = self-reliance, the guiding ideology." }
 ];
 

@@ -94,14 +94,14 @@
   <button class="bn-btn active" data-page="learn"><span class="bn-dot"></span>Learn</button>
   <button class="bn-btn" data-page="tools"><span class="bn-dot"></span>Tools</button>
   <button class="bn-btn" data-page="profile"><span class="bn-dot"></span>Profile</button>
-</nav><script src="https://xpdevs.github.io/Learn-Munhwao/data/hangeul.js"></script>
-<script src="https://xpdevs.github.io/Learn-Munhwao/data/vocab.js"></script>
-<script src="https://xpdevs.github.io/Learn-Munhwao/data/lessons.js"></script>
-<script src="https://xpdevs.github.io/Learn-Munhwao/data/grammar.js"></script>
-<script src="https://xpdevs.github.io/Learn-Munhwao/data/placement.js"></script>
-<script src="https://xpdevs.github.io/Learn-Munhwao/audio/manifest.js"></script><script>
+</nav><script src="./data/hangeul.js"></script>
+<script src="./data/vocab.js"></script>
+<script src="./data/lessons.js"></script>
+<script src="./data/grammar.js"></script>
+<script src="./data/placement.js"></script>
+<script src="./audio/manifest.js"></script><script>
 "use strict";
-const BASE_URL = "https://xpdevs.github.io/Learn-Munhwao/";
+const BASE_URL = "./";
 /* =====================================================================
    Munhwao Mastery - engine for the 140-lesson / 20-tier course.
    Strict linguistic purity: North Korean Standard (Munhwao) only.
@@ -177,9 +177,9 @@ function addXp(n) {
    falls back to the browser's Web Speech API. */
 function ttsSupported() { return typeof speechSynthesis !== "undefined" && typeof SpeechSynthesisUtterance !== "undefined"; }
 
-/* Munhwao pronunciation filter: rewrites any South Korean (Pyojuneo)
-   spelling to the North Korean standard before lookup/synthesis, so the
-   TTS always speaks Munhwao even for SK-typed text. This is an inlined
+/* Munhwao pronunciation guard: normalizes any Pyojuneo (South Korean)
+   spellings that slip into the text to the Northern standard before
+   lookup/synthesis, so the TTS always speaks Munhwao. This is an inlined
    twin of nk-normalize.js at the repo root - keep the dictionary in sync
    (search "SK_TO_MUNHWAO" in both files). */
 const SK_TO_MUNHWAO = [
@@ -188,7 +188,6 @@ const SK_TO_MUNHWAO = [
   ["세계", "셰계"], ["역사", "력사"], ["여학생", "녀학생"], ["여동생", "녀동생"],
   ["여행", "려행"], ["여권", "려권"], ["여자", "녀자"], ["여성", "녀성"],
   ["연습", "련습"], ["연필", "련필"], ["연락", "련락"], ["연결", "련결"],
-  ["유월", "류월"], ["유명", "류명"], ["유행", "류행"],
   ["노동", "로동"], ["노인", "로인"], ["냉면", "랭면"]
 ].sort(function (a, b) { return b[0].length - a[0].length; });
 function isHangulCh(ch) { return /[\uac00-\ud7af\u3131-\u3163]/.test(ch); }

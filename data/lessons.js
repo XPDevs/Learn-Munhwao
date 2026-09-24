@@ -65,7 +65,7 @@ add({ id: 1, tier: 1, title: "Meet the Hangul Alphabet", desc: "The Korean alpha
     card("ㄱ ㄴ ㄷ ㄹ ㅁ ㅂ ㅅ", "", "First seven consonants", "ㄱ(g/k) ㄴ(n) ㄷ(d/t) ㄹ(r/l) ㅁ(m) ㅂ(b/p) ㅅ(s).", ""),
     card("ㅏ ㅓ ㅗ ㅜ ㅡ ㅣ", "a eo o u eu i", "First six vowels", "ㅏ opens right, ㅓ opens left, ㅗ/ㅜ point up/down, ㅡ is the earth line, ㅣ is the standing person.", ""),
     card("세종대왕", "se-jong-dae-wang", "King Sejong the Great", "Hangul was proclaimed in Hunminjeongeum in 1443.", "세종대왕님!"),
-    card("조선글", "jo-seon-geul", "Korean script (North name)", "The North calls the alphabet 조선글; the South says 한글.", "조선글은 쉽고 아름답습니다. = Korean script is easy and beautiful.")
+    card("조선글", "jo-seon-geul", "Korean script (Munhwao name)", "The Munhwao name of the alphabet is 조선글.", "조선글은 쉽고 아름답습니다. = Korean script is easy and beautiful.")
   ],
   drillTypes: ["mc", "pick", "read"]
 });
@@ -85,10 +85,10 @@ add({ id: 2, tier: 1, title: "The First Vowels", desc: "Six vowels open the door
 
 add({ id: 3, tier: 1, title: "Consonants: ㄱ ㄴ ㅁ ㅅ ㅇ", desc: "Five essential consonants, enough to build real words.",
   learn: [
-    card("ㄱ", "g/k", "giyeok (g/k)", "Starts as 'g'; at a syllable end it is a cut-off 'k'.", "가 = ga."),
+    card("ㄱ", "g/k", "gieuk (g/k)", "Starts as 'g'; at a syllable end it is a cut-off 'k'.", "가 = ga."),
     card("ㄴ", "n", "nieun (n)", "Like 'n' in 'noon', always.", "나 = na."),
     card("ㅁ", "m", "mieum (m)", "Like 'm' in 'moon', always.", "마 = ma."),
-    card("ㅅ", "s", "siot (s)", "Like 's' in 'sun'; before ㅣ it sounds close to 'sh'.", "사 = sa."),
+    card("ㅅ", "s", "sieut (s)", "Like 's' in 'sun'; before ㅣ it sounds close to 'sh'.", "사 = sa."),
     card("ㅇ", "silent / ng", "ieung (silent initiator)", "At the start it makes no sound; at the end it is 'ng'.", "아 = a (the ㅇ is silent)."),
     card("가나마사", "ga-na-ma-sa", "Syllables you can already read", "ㄱ+ㅏ=가, ㄴ+ㅏ=나, ㅁ+ㅏ=마, ㅅ+ㅏ=사.", "Read them out loud!"),
     card("아마", "a-ma", "Word: maybe", "ㅇ+ㅏ + ㅁ+ㅏ. A real word!", "아마 그렇습니다 = Maybe that's so.")
@@ -98,7 +98,7 @@ add({ id: 3, tier: 1, title: "Consonants: ㄱ ㄴ ㅁ ㅅ ㅇ", desc: "Five esse
 
 add({ id: 4, tier: 1, title: "Consonants: ㄷ ㄹ ㅂ ㅈ ㅎ", desc: "Five more: the flowing ㄹ, the light ㅂ and the fresh ㅎ.",
   learn: [
-    card("ㄷ", "d/t", "digeut (d/t)", "Starts as 'd'; ends as a cut-off 't'.", "다 = da."),
+    card("ㄷ", "d/t", "dieut (d/t)", "Starts as 'd'; ends as a cut-off 't'.", "다 = da."),
     card("ㄹ", "r/l", "rieul (r/l)", "A flick like Spanish 'r' between vowels; 'l' at a syllable end.", "라 = ra."),
     card("ㅂ", "b/p", "bieup (b/p)", "Starts as 'b'; ends as a cut-off 'p'.", "바 = ba."),
     card("ㅈ", "j", "jieut (j)", "Like 'j' in 'jam'.", "자 = ja."),
@@ -270,10 +270,10 @@ add({ id: 18, tier: 2, title: "Sino-Korean Numbers 1-5", desc: "The second numbe
   numDrill: { kind: "sino", min: 1, max: 10 }
 });
 add({ id: 19, tier: 2, title: "Sino Numbers 6-10 (North style!)", desc: "The North says 륙 for six - keeping the R sound.",
-  grammar: grammarCard("The North keeps the R-L sound", "The South's 육 (six) becomes 륙 in Munhwao:", [
+  grammar: grammarCard("The North keeps the R-L sound", "Six is 륙 (ryuk) in Munhwao:", [
     "6 = 륙 (ryuk).",
     "60 = 륙십 (ryuk-sip).",
-    "June = 류월 (ryu-wol) - as a month, 륙 changes to 류.",
+    "June = 유월 (yu-wol).",
     "The same rule keeps initial N in 녀자 and initial R in 려행.",
     "The North SPELLS and PRONOUNCES them this way."
   ]),
@@ -294,7 +294,7 @@ add({ id: 21, tier: 2, title: "Dates, Money & Zero", desc: "Real territory: pric
   grammar: grammarCard("When to use which system", "The two systems live side by side:", [
     "NATIVE: counting objects, people, hours, ages (한 시, 두 명, 스무 살).",
     "SINO: dates, months, money, phone numbers, minutes (일 일, 이 원, 오 분).",
-    "Zero = 령 (ryeong) in the North. The South's 공 is only for sports scores.",
+    "Zero = 령 (ryeong). The word 공 appears only in sports scores.",
     "100 = 백 (same in both systems).",
     "Age: ask 몇 살, answer native - 스무 살 = 20 years old."
   ]),
@@ -386,7 +386,7 @@ add({ id: 29, tier: 3, title: "Yes-No Question Pattern", desc: "Almost any sente
 add({ id: 30, tier: 3, title: "North Korean Respect Levels", desc: "When to use the formal style - and when friends drop it.",
   grammar: grammarCard("Speech levels in the North", "Munhwao speakers shift levels by situation:", [
     "FORMAL (-습니다/습니까): work, shops, first meetings, public speech. The North uses it broadly EVERY DAY.",
-    "POLITE (haeyo ㅂ니다... actually 해요 style): still polite but softer; common between neighbours.",
+    "POLITE (해요 style): still polite but softer; common between neighbours.",
     "FRIENDLY (오/소): a Northern habit - older speakers add -오/-소: 가오.",
     "PLAIN (반말): to close friends and children: 간다, 뭐 해?",
     "Rule: when unsure, use formal -습니다. Extra respect never offends."
@@ -429,11 +429,11 @@ add({ id: 34, tier: 4, title: "Comrades & Friends", desc: "동무 - the Northern
   grammar: grammarCard("동무 - friend AND comrade", "In the North, 동무 is THE everyday word for a friend and a respectful address:", [
     "동무 = friend/comrade. Name + 동무: 리동무 = Comrade Ri.",
     "The whole society is a collective - even co-workers are 동무.",
-    "Young people also use 친구 these days.",
+    "In Munhwao, 동무 is the word - for men and women alike.",
     "Addressing friendly adults: 아저씨 (uncle), 아주머니 (auntie).",
     "Never use 동무 for your beloved in a romantic sense - that's a friend only."
   ]),
-  learn: vocabCards("p_friend", "p_friend2", "p_man", "p_woman", "p_child"),
+  learn: vocabCards("p_friend", "p_man", "p_woman", "p_child"),
   drillTypes: ["mc", "listen", "pick", "build"]
 });
 add({ id: 35, tier: 4, title: "Occupations", desc: "What do people do? Teachers, workers, doctors and officials.",
@@ -481,7 +481,7 @@ add({ id: 38, tier: 5, title: "SOV Word Order", desc: "Korean puts the verb LAST
 add({ id: 39, tier: 5, title: "Topic Particle 은/는", desc: "This little hinge says 'as for...' and sets the topic.",
   grammar: grammarCard("은 or 는?", "Choose by the last letter of the noun:", [
     "Consonant end -> 은: 책은, 방은.",
-    "Vowel end -> 는: 나는, 동무는... no, 동무 ends in ㅜ so 동무는. Correct: 나는.",
+    "Vowel end -> 는: 나는, 동무는.",
     "Tells what the sentence is ABOUT, or contrasts: 나는 as for me.",
     "Subjects often drop - Korean is a 'zero pronoun' language.",
     "Example: 저는 학생입니다. = As for me, I am a student."
@@ -495,7 +495,7 @@ add({ id: 39, tier: 5, title: "Topic Particle 은/는", desc: "This little hinge
 });
 add({ id: 40, tier: 5, title: "Subject Particle 이/가", desc: "이/가 marks the SUBJECT doing the action - and answers 'who?'.",
   grammar: grammarCard("이 vs 가", "Same rule as 은/는:", [
-    "Consonant end -> 이: 사람이, 비가... no, 비 ends in ㅣ so 비가. Correct: 사람이.",
+    "Consonant end -> 이: 사람이, 책이.",
     "Vowel end -> 가: 동무가, 우리가.",
     "이/가 centres the subject: 누가 옵니까? -> 동무가 옵니다.",
     "With 있다/없다: 돈이 있습니다 (there is money).",
@@ -534,7 +534,7 @@ add({ id: 43, tier: 5, title: "Negatives: 아닙니다", desc: "The polite 'is n
   drillTypes: ["mc", "build", "pick", "type"]
 });
 add({ id: 44, tier: 5, title: "Place Particles 에 / 에서", desc: "에 for destination, 에서 for the place of action.",
-  grammar: grammarCard("에 vs 에서", "Two sades - choose by meaning:", [
+  grammar: grammarCard("에 vs 에서", "Two particles - choose by meaning:", [
     "에 = TO/AT (destination, existence): 평양에 갑니다, 방에 있습니다.",
     "에서 = AT (action there): 식당에서 먹습니다.",
     "에서 also = FROM: 어디에서 왔습니까?",
@@ -680,7 +680,7 @@ add({ id: 57, tier: 7, title: "Days of the Week", desc: "Monday to Sunday - with
 add({ id: 58, tier: 7, title: "Months & Dates", desc: "Sino number + 월: 칠월 (July), 십이월 (December).",
   grammar: grammarCard("The month formula", "Simple and regular:", [
     "일월, 이월, 삼월 ... 칠월, 팔월, 구월, 시월, 십일월, 십이월.",
-    "June: 류월 (ryu-wol) - Northern spelling keeps the R.",
+    "June: 유월 (yu-wol) - the special month form.",
     "October drops the ㅂ: 시월 (not 십월).",
     "Dates: 일 일 (the 1st), 십오 일 (the 15th).",
     "Full date: 2026년 9월 14일."
@@ -729,7 +729,7 @@ add({ id: 62, tier: 8, title: "Kimchi & Banchan", desc: "Koreans eat tables full
 });
 add({ id: 63, tier: 8, title: "Noodles & Favorites", desc: "랭면 - Pyongyang cold noodles, the national pride.",
   grammar: grammarCard("평양랭면 - pride of Pyongyang", "Cold buckwheat noodles in icy broth, topped with beef and pear:", [
-    "랭면 = cold noodles (North spelling; the South writes 냉면).",
+    "랭면 = cold noodles - the Pyongyang classic, spoken with the R sound.",
     "평양랭면 = the Pyongyang original.",
     "Toppings: 배 (pear), 오이 (cucumber), boiled egg.",
     "Order: 랭면 한 그릇 주십시오 = one bowl, please.",
@@ -911,7 +911,7 @@ add({ id: 81, tier: 11, title: "Study Verbs", desc: "Keep learning: 공부하다
 add({ id: 82, tier: 11, title: "Work & Labor", desc: "로동 - the work of the people, with Northern spelling.",
   learn: vocabCards("v_work", "v_begin", "v_finish", "w_factory", "w_office"),
   learnExtra: [
-    card("로동자", "ro-dong-ja", "worker", "North spelling of 노동자.", ""),
+    card("로동자", "ro-dong-ja", "worker", "Munhwao keeps the R: 로동자.", ""),
     card("로임", "ro-im", "wage", "North spelling.", "로임을 받습니다."),
     card("출근", "chul-geun", "going to work", "", "출근합니다."),
     card("퇴근", "toe-geun", "leaving work", "", "퇴근합니다.")
@@ -1159,21 +1159,21 @@ add({ id: 106, tier: 14, title: "Complex Grammar Review", desc: "Connect, reason
    TIER 15 - MUNHWAO PRONUNCIATION
    ===================================================================== */
 add({ id: 107, tier: 15, title: "The Initial N & R Rule", desc: "The signature of Northern speech: keep the N and R.",
-  grammar: grammarCard("North keeps ㄴ and ㄹ at word start", "The South drops some initial N/R; the North keeps them:", [
-    "녀자 (nyeo-ja, woman) - South: 여자.",
-    "려행 (ryeo-haeng, travel) - South: 여행.",
-    "로동 (ro-dong, labor) - South: 노동.",
+  grammar: grammarCard("Munhwao keeps initial ㄴ and ㄹ", "The signature of Northern speech - keep the N and R sounds:", [
+    "녀자 = woman (say the N: nyeo-ja).",
+    "려행 = travel (say the R: ryeo-haeng).",
+    "로동 = labor (say the R: ro-dong).",
     "류경 (ryu-gyeong) - old name of Pyongyang.",
     "Never weaken these in Munhwao speech!"
   ]),
   learn: vocabCards("p_woman", "t_travel", "v_work", "s_6"),
   drillTypes: ["mc", "listen", "pick", "read"]
 });
-add({ id: 108, tier: 15, title: "륙 vs 육 - Northern Six", desc: "Numbers carry the rule too: 6 = 륙.",
+add({ id: 108, tier: 15, title: "륙 - the Northern Six", desc: "Numbers carry the rule too: 6 = 륙.",
   learn: vocabCards("s_6", "n_6", "tm_month_sino"),
   learnExtra: [
     card("륙십", "ryuk-sip", "sixty (Sino)", "", "60 = 륙십."),
-    card("류월", "ryu-wol", "June", "As a month, 륙 becomes 류.", "류월에 평양에 갑니다."),
+    card("유월", "yu-wol", "June", "The special month form: 유월 (yu-wol).", "유월에 평양에 갑니다."),
     card("백륙", "baeng-nyuk", "106", "Sound linking: 백 + 륙.", "")
   ],
   drillTypes: ["mc", "listen", "read", "pick"]
@@ -1205,15 +1205,15 @@ add({ id: 110, tier: 15, title: "Intonation & Flow", desc: "Korean sentences ris
   learn: vocabCards("g_hello", "g_thanks", "vb_what", "vb_where"),
   drillTypes: ["listen", "mc", "pick", "read"]
 });
-add({ id: 111, tier: 15, title: "North vs South Sound", desc: "Ears of a native: notice the differences, stay Northern.",
+add({ id: 111, tier: 15, title: "The Northern Sound", desc: "Ears of a native: every word keeps its Munhwao shape.",
   learn: vocabCards("p_woman", "t_travel", "v_work", "f_noodles", "s_6"),
   drillTypes: ["mc", "listen", "pick", "read"]
 });
 add({ id: 112, tier: 15, title: "Pronunciation Review", desc: "Sound check: say these like your teacher would.",
   learn: [
     card("녀성", "nyeo-seong", "woman (formal)", "Initial N kept.", ""),
-    card("려권", "ryeo-gwon", "passport", "South writes 여권.", ""),
-    card("력사", "ryeok-sa", "history", "South writes 역사.", ""),
+    card("려권", "ryeo-gwon", "passport", "Munhwao keeps the initial R: 려권.", ""),
+    card("력사", "ryeok-sa", "history", "Munhwao keeps the initial R: 력사.", ""),
     card("련습", "ryeon-seup", "practice / rehearsal", "North: 련습.", "")
   ],
   drillTypes: ["read", "listen", "mc", "pick"]
