@@ -35,12 +35,20 @@
       <span id="stat-hearts">5</span>
     </div>
     <div class="nav-links" id="desktop-nav">
+      <button class="nav-link" data-page="home">Home</button>
       <button class="nav-link active" data-page="learn">Learn</button>
+      <button class="nav-link" data-page="library">Library</button>
+      <button class="nav-link" data-page="speak">Speak</button>
       <button class="nav-link" data-page="tools">Tools</button>
       <button class="nav-link" data-page="profile">Profile</button>
     </div>
   </div>
 </header>
+
+<!-- ===== HOME PAGE ===== -->
+<main id="page-home" class="page">
+  <div id="home-content"></div>
+</main>
 
 <!-- ===== LEARN PAGE ===== -->
 <main id="page-learn" class="page active">
@@ -62,6 +70,18 @@
 <main id="page-profile" class="page">
   <div class="page-heading"><h1>Profile &amp; Progress</h1><p>Your XP, streak and spaced-repetition health.</p></div>
   <div class="profile-grid" id="profile-grid"></div>
+</main>
+
+<!-- ===== LIBRARY PAGE ===== -->
+<main id="page-library" class="page">
+  <div class="page-heading"><h1>Library</h1><p>Reading, listening and immersion in real Munhwao.</p></div>
+  <div id="library-content"></div>
+</main>
+
+<!-- ===== SPEAK PAGE ===== -->
+<main id="page-speak" class="page">
+  <div class="page-heading"><h1>Speak</h1><p>Talking practice, pronunciation scoring and the AI partner.</p></div>
+  <div id="speak-content"></div>
 </main>
 
 <!-- ===== LESSON / PLACEMENT / MODAL ===== -->
@@ -91,7 +111,10 @@
 
 <!-- ===== BOTTOM NAV ===== -->
 <nav class="bottom-nav" id="bottom-nav">
-  <button class="bn-btn active" data-page="learn"><span class="bn-dot"></span>Learn</button>
+  <button class="bn-btn active" data-page="home"><span class="bn-dot"></span>Home</button>
+  <button class="bn-btn" data-page="learn"><span class="bn-dot"></span>Learn</button>
+  <button class="bn-btn" data-page="library"><span class="bn-dot"></span>Library</button>
+  <button class="bn-btn" data-page="speak"><span class="bn-dot"></span>Speak</button>
   <button class="bn-btn" data-page="tools"><span class="bn-dot"></span>Tools</button>
   <button class="bn-btn" data-page="profile"><span class="bn-dot"></span>Profile</button>
 </nav><script src="./data/hangeul.js"></script>
@@ -99,6 +122,8 @@
 <script src="./data/lessons.js"></script>
 <script src="./data/grammar.js"></script>
 <script src="./data/placement.js"></script>
+<script src="./data/dict.js"></script>
+<script src="./data/library.js"></script>
 <script src="./audio/manifest.js"></script><script>
 "use strict";
 const BASE_URL = "./";
@@ -133,7 +158,21 @@ const DEFAULT_STATE = {
   totalCorrect: 0,
   totalSeen: 0,
   dayXp: 0,
-  settings: { tts: true, rate: 0.85, dark: true }
+  settings: { tts: true, rate: 0.85, dark: true, useAI: false, apiUrl: "", apiKey: "", model: "gpt-4o-mini" },
+  user: { name: "", avatar: 0, joined: "" },
+  achievements: {},
+  quests: {},
+  bookmarks: [],
+  notes: [],
+  studyHistory: [],
+  plan: null,
+  speaking: { attempts: 0, avgScore: 0 },
+  customDecks: {},
+  genSrs: {},
+  syncCfg: { remote: "", last: 0, lastPush: 0 },
+  community: { posts: [], following: [], likes: {} },
+  classroom: { code: "", joinedAt: 0, scores: {} },
+  certificates: {}
 };
 const STATE_KEY = "munhwao_mastery_v2";
 
@@ -141,7 +180,11 @@ let state = loadState();
 function loadState() {
   try {
     const raw = localStorage.getItem(STATE_KEY);
-    if (raw) return Object.assign({}, DEFAULT_STATE, JSON.parse(raw));
+    if (raw) {
+      const loaded = JSON.parse(raw);
+      loaded.settings = Object.assign({ tts: true, rate: 0.85, dark: true, useAI: false, apiUrl: "", apiKey: "", model: "gpt-4o-mini" }, loaded.settings || {});
+      return Object.assign({}, DEFAULT_STATE, loaded);
+    }
   } catch (e) {}
   return Object.assign({}, DEFAULT_STATE);
 }
@@ -458,7 +501,7 @@ function confirmBox(title, sub, btnLabel, onOk) {
 /* =====================================================================
    NAVIGATION
    ===================================================================== */
-const NAV_PAGES = ["learn", "tools", "profile"];
+const NAV_PAGES = ["home", "learn", "library", "speak", "tools", "profile"];
 function showPage(name) {
   NAV_PAGES.forEach(function (p) { el("page-" + p).classList.toggle("active", p === name); });
   document.querySelectorAll(".nav-link").forEach(function (b) { b.classList.toggle("active", b.dataset.page === name); });
@@ -466,6 +509,9 @@ function showPage(name) {
   if (name === "learn") renderTree();
   if (name === "tools") renderTools();
   if (name === "profile") renderProfile();
+  if (name === "home" && window.renderHome) renderHome();
+  if (name === "library" && window.renderLibraryHub) renderLibraryHub();
+  if (name === "speak" && window.renderSpeakHub) renderSpeakHub();
   window.scrollTo(0, 0);
 }
 function bindNav() {
@@ -1784,6 +1830,7 @@ function init() {
   applyTheme();
   bindNav();
   renderTree();
+  showPage("home");
   if (!state.placement && !state.placementSeen) openPlacementIntro();
 }
 
@@ -1811,6 +1858,10 @@ if ("serviceWorker" in navigator && /^https?:/.test(location.protocol)) {
 /* Distribute MH data - loaded as scripts before this file runs. */
 if (!window.MH || !MH.vocab || !MH.normaliseInput) { console.error("Data layer missing."); }
 
-init();</script>
+if (document.readyState === "loading") { document.addEventListener("DOMContentLoaded", init); }
+else { init(); }</script>
+<script src="./js/library.js"></script>
+<script src="./js/speak.js"></script>
+<script src="./js/tools.js"></script>
 </body>
 </html>
