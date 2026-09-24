@@ -1,8 +1,10 @@
 /* =====================================================================
    LIBRARY AND READING FEATURES  (Munhwao Mastery)
    Provides the landing page, the graded reading library with tap-to-
-   translate, the news reader, the listening lab (dictation and
-   shadowing), the media immersion list and the culture notes.
+   translate, the news reader with an advanced archive, the listening
+   lab (dictation, shadowing and comprehension quizzes), novels and
+   literature, academic reading, the media immersion list and the
+   culture notes.
    Depends on the inline engine in index.html (el, speak, state, MH).
    ===================================================================== */
 (function () {
@@ -79,7 +81,7 @@
 
     html += '<section class="hm-cards">'
       + featureCard("learn", "Follow the path", "140 lessons across 20 tiers, from Hangul to literature, with drills, hearts and streaks.")
-      + featureCard("library", "Read and listen", "Graded stories, news, culture and a listening lab with dictation and shadowing.")
+      + featureCard("library", "Read and listen", "Graded stories from A1 to C2, news with an advanced archive, novels, academic texts and listening drills with dictation, shadowing and comprehension quizzes.")
       + featureCard("speak", "Speak and be heard", "Pronunciation scoring, speech recognition and a conversation partner.")
       + featureCard("tools", "Open the toolbox", "Dictionary, North vs South comparison, flashcards, SRS, Anki and more.")
       + '</section>';
@@ -146,7 +148,7 @@
     MF.ready();
     var box = el("library-content");
     box.innerHTML = '<div class="lib-tabs">'
-      + tabBtn("read", "Reading") + tabBtn("news", "News") + tabBtn("listen", "Listening") + tabBtn("media", "Media") + tabBtn("culture", "Culture")
+      + tabBtn("read", "Reading") + tabBtn("news", "News") + tabBtn("listen", "Listening") + tabBtn("novels", "Novels") + tabBtn("academic", "Academic") + tabBtn("culture", "Culture") + tabBtn("media", "Media")
       + "</div>" + '<div id="lib-pane"></div>';
     box.querySelectorAll(".lib-tab").forEach(function (b) {
       b.addEventListener("click", function () {
@@ -167,19 +169,21 @@
     if (tab === "read") renderReadTab(pane);
     else if (tab === "news") renderNewsTab(pane);
     else if (tab === "listen") renderListenTab(pane);
+    else if (tab === "novels") renderNovelsTab(pane);
+    else if (tab === "academic") renderAcademicTab(pane);
     else if (tab === "media") renderMediaTab(pane);
     else renderCultureTab(pane);
   }
 
   function levelColor(lv) {
-    return { "A1": "var(--green)", "A2": "var(--green-light)", "B1": "var(--orange)", "B2": "var(--blue)" }[lv] || "var(--green)";
+    return { "A1": "var(--green)", "A2": "var(--green-light)", "B1": "var(--orange)", "B2": "var(--blue)", "C1": "var(--purple)", "C2": "var(--teal)", "ADV": "var(--purple)" }[lv] || "var(--green)";
   }
 
   /* ---------- Reading tab ---------- */
   function renderReadTab(pane) {
     var groups = {};
     (MH.LIBRARY || []).forEach(function (t) { (groups[t.level] = groups[t.level] || []).push(t); });
-    var order = ["A1", "A2", "B1", "B2"];
+    var order = ["A1", "A2", "B1", "B2", "C1", "C2"];
     var html = "";
     order.forEach(function (lv) {
       if (!groups[lv]) return;
@@ -197,7 +201,7 @@
   }
 
   function lvdesc(lv) {
-    return { "A1": "Starter lines, all from tier one to four nouns.", "A2": "Short stories and news with daily words.", "B1": "Longer sentences, leisure and science.", "B2": "Literary and historical register for advanced readers." }[lv] || "";
+    return { "A1": "Starter lines, all from tier one to four nouns.", "A2": "Short stories and news with daily words.", "B1": "Longer sentences, leisure and science.", "B2": "Literary and historical register for advanced readers.", "C1": "Long form articles and reflective essays for confident readers.", "C2": "Scholarly and literary prose for advanced readers." }[lv] || "";
   }
 
   function renderReader(id) {
@@ -291,57 +295,138 @@
     saveState();
   }
 
-  /* ---------- News tab ---------- */
+  /* ---------- News tab with advanced archive ---------- */
   function renderNewsTab(pane) {
-    var html = '<div class="rd-tip">Newspaper style sentences in the plain formal register. Tap a headline to read the full item.</div>';
+    var html = '<div class="rd-tip">The news of today in the plain formal register, plus an advanced archive of longer editorials and features.</div>';
+    html += '<div class="rd-level"><div class="rd-level-head"><span class="rd-level-chip" style="border-color:var(--orange);color:var(--orange);">Today</span><span style="color:var(--text-dim);font-size:0.82rem;">Short items in daily style</span></div>';
     (MH.NEWS || []).forEach(function (n) {
-      html += '<button class="rd-card" data-id="' + n.id + '"><div class="rd-card-title">' + MF.esc(n.title) + '</div><div class="rd-card-meta"><span class="rd-tag">' + MF.esc(n.cat) + "</span><span style=\"color:var(--text-dim);\">" + MF.esc(n.date) + "</span></div></button>";
+      html += newsCard(n, "news");
     });
+    html += "</div>";
+    html += '<div class="rd-level"><div class="rd-level-head"><span class="rd-level-chip" style="border-color:var(--purple);color:var(--purple);">Advanced archive</span><span style="color:var(--text-dim);font-size:0.82rem;">Long editorials and features</span></div>';
+    (MH.ARCHIVE || []).forEach(function (n) {
+      html += newsCard(n, "archive");
+    });
+    html += "</div>";
     pane.innerHTML = html;
     pane.querySelectorAll(".rd-card").forEach(function (c) {
-      c.addEventListener("click", function () { openNewsItem(c.dataset.id); });
+      var src = c.dataset.src === "archive" ? (MH.ARCHIVE || []) : (MH.NEWS || []);
+      c.addEventListener("click", function () {
+        var n = src.find(function (x) { return x.id === c.dataset.id; });
+        if (n) openArticle({ title: n.title, tag: n.cat, paras: n.paras, gloss: n.gloss, id: n.id }, "BACK TO NEWS", function () {
+          renderLibraryHub();
+          setTimeout(function () { renderNewsTab(el("lib-pane")); }, 0);
+        }, { key: "news", level: c.dataset.src === "archive" ? "ADV" : "" });
+      });
     });
   }
 
-  function openNewsItem(id) {
-    var n = (MH.NEWS || []).find(function (x) { return x.id === id; });
-    if (!n) return;
-    var html = '<button class="back-btn" id="nv-back">BACK TO NEWS</button>';
-    html += '<div class="rd-head"><div><div class="rd-title">' + MF.esc(n.title) + "</div><div class=\"rd-tag\">" + MF.esc(n.cat) + " \u00B7 " + MF.esc(n.date) + "</div></div></div>";
+  function newsCard(n, src) {
+    return '<button class="rd-card" data-id="' + n.id + '" data-src="' + src + '"><div class="rd-card-title">' + MF.esc(n.title) + '</div><div class="rd-card-meta"><span class="rd-tag">' + MF.esc(n.cat) + "</span><span style=\"color:var(--text-dim);\">" + MF.esc(n.date || "") + "</span></div></button>";
+  }
+
+  /* ---------- generic article reader ---------- */
+  function openArticle(item, backLabel, backFn, opts) {
+    opts = opts || {};
+    var html = '<button class="back-btn" id="oa-back">' + MF.esc(backLabel) + "</button>";
+    html += '<div class="rd-head">'
+      + (opts.level ? '<span class="rd-level-chip" style="border-color:' + levelColor(opts.level) + ';color:' + levelColor(opts.level) + ';">' + opts.level + "</span>" : "")
+      + "<div><div class=\"rd-title\">" + MF.esc(item.title) + "</div>"
+      + (item.tag ? '<div class="rd-tag">' + MF.esc(item.tag) + "</div>" : "")
+      + "</div></div>";
+    html += '<div class="rd-tip">Tap any word to see its meaning. Listen each paragraph, then read it out loud.</div>';
     html += '<div id="rd-tapinfo" class="rd-tapinfo"></div>';
-    n.paras.forEach(function (p) {
-      html += '<div class="rd-para"><div class="rd-para-row"><button class="mini-speak" data-tts="' + MF.esc(p.ko) + '">LISTEN</button></div>'
-        + '<div class="rd-ko">' + MF.tokHTML(p.ko, n.gloss) + "</div>"
+    (item.paras || []).forEach(function (p, i) {
+      html += '<div class="rd-para"><div class="rd-para-row">'
+        + '<button class="mini-speak" data-tts="' + MF.esc(p.ko) + '">LISTEN</button>'
+        + '<button class="mini-speak ghost" data-rep="' + i + '">REPEAT</button>'
+        + "</div>"
+        + '<div class="rd-ko">' + MF.tokHTML(p.ko, item.gloss) + "</div>"
         + '<div class="rd-en">' + MF.esc(p.en) + "</div></div>";
     });
-    html += '<div class="rd-actions"><button class="lesson-btn check" id="nv-save">Save to bookmarks</button></div>';
+    html += '<div class="rd-actions"><button class="lesson-btn check" id="oa-save">Save to bookmarks</button></div>';
     el("lib-pane").innerHTML = html;
-    el("nv-back").addEventListener("click", renderNewsTab ? function () { renderLibraryHub(); setTimeout(function () { renderNewsTab(el("lib-pane")); }, 0); } : renderLibraryHub);
-    el("nv-save").addEventListener("click", function () {
-      if (state.bookmarks.indexOf("news:" + id) < 0) state.bookmarks.push("news:" + id);
+    el("oa-back").addEventListener("click", backFn || renderLibraryHub);
+    el("oa-save").addEventListener("click", function () {
+      state.bookmarks = state.bookmarks || [];
+      if (state.bookmarks.indexOf((opts.key || "text") + ":" + item.id) < 0) state.bookmarks.push((opts.key || "text") + ":" + item.id);
       saveState();
       toast("Saved to bookmarks");
     });
     el("lib-pane").querySelectorAll(".rd-tok").forEach(function (sp) {
-      sp.addEventListener("click", function () { showTapWord(sp.dataset.w, n.gloss); });
+      sp.addEventListener("click", function () { showTapWord(sp.dataset.w, item.gloss); });
     });
     el("lib-pane").querySelectorAll(".mini-speak").forEach(function (b) {
-      b.addEventListener("click", function () { speak(b.dataset.tts); });
+      if (b.dataset.tts) b.addEventListener("click", function () { speak(b.dataset.tts); });
+      if (b.dataset.rep) b.addEventListener("click", function () {
+        var p = item.paras[parseInt(b.dataset.rep, 10)];
+        if (p) repeatSentence(p.ko);
+      });
+    });
+  }
+
+  /* ---------- Novels and literature tab ---------- */
+  function renderNovelsTab(pane) {
+    var html = '<div class="rd-tip">Novels and literary works in Munhwao, split into short parts. Tap any word to see its meaning.</div>';
+    var works = {};
+    (MH.NOVELS || []).forEach(function (n) { (works[n.work] = works[n.work] || []).push(n); });
+    Object.keys(works).forEach(function (w) {
+      html += '<div class="rd-level"><div class="rd-level-head"><span class="rd-level-chip" style="border-color:var(--purple);color:var(--purple);">' + MF.esc(w) + "</span></div>";
+      works[w].forEach(function (n) {
+        html += '<button class="rd-card" data-id="' + n.id + '"><div class="rd-card-title">' + MF.esc(n.title) + '</div><div class="rd-card-meta"><span class="rd-tag">Novel</span><span class="rd-tag" style="color:var(--purple);">' + MF.esc(n.part) + "</span></div></button>";
+      });
+      html += "</div>";
+    });
+    pane.innerHTML = html || '<p style="color:var(--text-dim);text-align:center;">No novels loaded.</p>';
+    pane.querySelectorAll(".rd-card").forEach(function (c) {
+      c.addEventListener("click", function () {
+        var n = (MH.NOVELS || []).find(function (x) { return x.id === c.dataset.id; });
+        if (n) openArticle({ title: n.title, tag: "novel", paras: n.paras, gloss: n.gloss, id: n.id }, "BACK TO NOVELS", function () {
+          renderLibraryHub();
+          setTimeout(function () { renderNovelsTab(el("lib-pane")); }, 0);
+        }, { key: "novel" });
+      });
+    });
+  }
+
+  /* ---------- Academic reading tab ---------- */
+  function renderAcademicTab(pane) {
+    var html = '<div class="rd-tip">Academic reading: short lecture and essay extracts in formal Munhwao. Tap any word to see its meaning.</div>';
+    (MH.ACADEMIC || []).forEach(function (a) {
+      html += '<button class="rd-card" data-id="' + a.id + '"><div class="rd-card-title">' + MF.esc(a.title) + '</div><div class="rd-card-meta"><span class="rd-tag">Academic</span><span class="rd-tag" style="color:var(--teal);">' + MF.esc(a.field || "") + "</span></div></button>";
+    });
+    pane.innerHTML = html || '<p style="color:var(--text-dim);text-align:center;">No academic texts loaded.</p>';
+    pane.querySelectorAll(".rd-card").forEach(function (c) {
+      c.addEventListener("click", function () {
+        var a = (MH.ACADEMIC || []).find(function (x) { return x.id === c.dataset.id; });
+        if (a) openArticle({ title: a.title, tag: a.field || "academic", paras: a.paras, gloss: a.gloss, id: a.id }, "BACK TO ACADEMIC", function () {
+          renderLibraryHub();
+          setTimeout(function () { renderAcademicTab(el("lib-pane")); }, 0);
+        }, { key: "acad", level: a.level || "" });
+      });
     });
   }
 
   /* ---------- Listening tab ---------- */
   function renderListenTab(pane) {
-    var html = '<div class="rd-tip">Pick a text, then train either ear. Dictation plays a sentence and you type it. Shadowing plays a sentence and you repeat it out loud.</div>';
+    var html = '<div class="rd-tip">Three ways to train your ears. Dictation plays a sentence and you type it. Shadowing plays a sentence and you repeat it out loud. The comprehension quiz plays a sentence and asks a question about it.</div>';
     html += '<div class="ls-modes">'
-      + modeBtn("dict") + modeBtn("shadow")
+      + modeBtn("dict") + modeBtn("shadow") + modeBtn("quiz")
       + "</div>" + '<div id="ls-mode-wrap"></div>';
     pane.innerHTML = html;
-    function modeBtn(m) { return '<button class="lib-tab ls-mode" data-mode="' + m + '">' + (m === "dict" ? "Dictation" : "Shadowing") + "</button>"; }
+    function modeBtn(m) {
+      if (m === "dict") return '<button class="lib-tab ls-mode" data-mode="dict">Dictation</button>';
+      if (m === "shadow") return '<button class="lib-tab ls-mode" data-mode="shadow">Shadowing</button>';
+      return '<button class="lib-tab ls-mode" data-mode="quiz">Comprehension</button>';
+    }
     function showMode(m) {
       var wrap = el("ls-mode-wrap");
-      wrap.innerHTML = '';
-
+      wrap.innerHTML = "";
+      if (m === "quiz") {
+        wrap.appendChild(makeDiv('listening', '<div class="lesson-prompt">Comprehension quiz</div><div class="ls-stage" id="ls-stage"></div>'));
+        initQuiz();
+        return;
+      }
       var sel = document.createElement("select");
       sel.className = "lesson-input listen-select";
       (MH.LIBRARY || []).forEach(function (t) {
@@ -351,12 +436,7 @@
         sel.appendChild(o);
       });
       wrap.appendChild(sel);
-
-      if (m === "dict") {
-        wrap.appendChild(makeDiv('listening', '<div class="lesson-prompt">Dictation</div><div class="ls-stage" id="ls-stage"></div>'));
-      } else {
-        wrap.appendChild(makeDiv('listening', '<div class="lesson-prompt">Shadowing</div><div class="ls-stage" id="ls-stage"></div>'));
-      }
+      wrap.appendChild(makeDiv('listening', '<div class="lesson-prompt">' + (m === "dict" ? "Dictation" : "Shadowing") + '</div><div class="ls-stage" id="ls-stage"></div>'));
       pickText(sel.value, m);
       sel.addEventListener("change", function () { pickText(sel.value, m); });
     }
@@ -475,6 +555,71 @@
     paint();
   }
 
+  /* ---------- Listening comprehension quiz ---------- */
+  function initQuiz() {
+    var stage = el("ls-stage");
+    if (!stage) return;
+    MF.ready();
+    var items = MH.LISTEN_QUIZ || [];
+    var idx = 0, right = 0;
+    if (!items.length) { stage.innerHTML = '<p style="color:var(--text-dim);text-align:center;">No quiz items loaded.</p>'; return; }
+    stage.innerHTML = "";
+    function paint() {
+      if (idx >= items.length) {
+        var total = items.length;
+        var pct = Math.round((right / total) * 100);
+        var gained = false;
+        if (pct >= 80 && !(state.quizDone && state.quizDone.compre)) {
+          state.quizDone = state.quizDone || {};
+          state.quizDone.compre = 1;
+          addXp(30);
+          saveState();
+          updateTopbarStats();
+          gained = true;
+        }
+        stage.innerHTML = '<div style="text-align:center;" class="ls-done"><div class="complete-icon">DONE</div><h2>Comprehension finished</h2>'
+          + '<p style="color:var(--text-dim);margin:8px 0;">You answered ' + right + " of " + total + " correctly (" + pct + "%).</p>"
+          + (gained ? '<p style="color:var(--green);font-weight:800;">+30 XP</p>' : "")
+          + '<div class="hero-cta"><button class="lesson-btn check" id="ls-restart">Play again</button></div></div>';
+        var r = el("ls-restart");
+        if (r) r.addEventListener("click", function () { initQuiz(); });
+        return;
+      }
+      var it = items[idx];
+      stage.innerHTML = '<div class="ls-progress">Question ' + (idx + 1) + " of " + items.length + "</div>"
+        + '<div class="ls-card"><div class="ls-question" id="ls-q" style="letter-spacing:2px;">\u25CF\u25CF\u25CF\u25CF\u25CF\u25CF</div></div>'
+        + '<div class="ls-actions"><button class="lesson-btn check" id="ls-play">Play</button>'
+        + '<button class="lesson-btn ghost" id="ls-slow">Slow</button></div>'
+        + '<div class="ls-quiz-q">' + MF.esc(it.q) + "</div>"
+        + '<div class="ls-quiz-opts" id="ls-quiz-opts"></div>';
+      el("ls-play").addEventListener("click", function () { speak(it.ko, 0.85); });
+      el("ls-slow").addEventListener("click", function () { speak(it.ko, 0.6); });
+      var opts = el("ls-quiz-opts");
+      it.opts.forEach(function (o, oi) {
+        var b = document.createElement("button");
+        b.className = "lesson-btn ghost ls-opt";
+        b.textContent = o;
+        b.addEventListener("click", function () {
+          var good = oi === it.a;
+          if (good) right++;
+          var fb = document.createElement("div");
+          fb.className = "feedback-banner " + (good ? "correct" : "wrong");
+          fb.innerHTML = '<div class="fb-head">' + (good ? "Correct" : "Not quite") + "</div>"
+            + '<div class="fb-why">' + MF.esc(it.en) + "</div>";
+          stage.appendChild(fb);
+          var next = document.createElement("button");
+          next.className = "lesson-btn continue";
+          next.textContent = "Continue";
+          next.addEventListener("click", function () { idx++; paint(); });
+          stage.appendChild(next);
+          [].forEach.call(opts.children, function (x) { x.disabled = true; });
+        });
+        opts.appendChild(b);
+      });
+    }
+    paint();
+  }
+
   /* ---------- Media tab ---------- */
   function renderMediaTab(pane) {
     var html = '<div class="rd-tip">This immersion page lists places to grow your own collection. Put audio and video files in the media folder, then press play.</div>';
@@ -529,28 +674,10 @@
   function openCulture(id) {
     var c = (MH.CULTURE || []).find(function (x) { return x.id === id; });
     if (!c) return;
-    var html = '<button class="back-btn" id="cl-back">BACK TO CULTURE</button>';
-    html += '<div class="rd-head"><div><div class="rd-title">' + MF.esc(c.title) + "</div><div class=\"rd-tag\">" + MF.esc(c.tag) + "</div></div></div>";
-    html += '<div id="rd-tapinfo" class="rd-tapinfo"></div>';
-    c.paras.forEach(function (p) {
-      html += '<div class="rd-para"><div class="rd-para-row"><button class="mini-speak" data-tts="' + MF.esc(p.ko) + '">LISTEN</button></div>'
-        + '<div class="rd-ko">' + MF.tokHTML(p.ko, c.gloss) + "</div>"
-        + '<div class="rd-en">' + MF.esc(p.en) + "</div></div>";
-    });
-    html += '<div class="rd-actions"><button class="lesson-btn check" id="cl-save">Add to bookmarks</button></div>';
-    el("lib-pane").innerHTML = html;
-    el("cl-back").addEventListener("click", function () { renderLibraryHub(); setTimeout(function () { renderCultureTab(el("lib-pane")); }, 0); });
-    el("cl-save").addEventListener("click", function () {
-      if (state.bookmarks.indexOf("culture:" + id) < 0) state.bookmarks.push("culture:" + id);
-      saveState();
-      toast("Saved to bookmarks");
-    });
-    el("lib-pane").querySelectorAll(".rd-tok").forEach(function (sp) {
-      sp.addEventListener("click", function () { showTapWord(sp.dataset.w, c.gloss); });
-    });
-    el("lib-pane").querySelectorAll(".mini-speak").forEach(function (b) {
-      b.addEventListener("click", function () { speak(b.dataset.tts); });
-    });
+    openArticle({ title: c.title, tag: c.tag, paras: c.paras, gloss: c.gloss, id: c.id }, "BACK TO CULTURE", function () {
+      renderLibraryHub();
+      setTimeout(function () { renderCultureTab(el("lib-pane")); }, 0);
+    }, { key: "culture" });
   }
 
   /* ---------- repeat: listen then record ---------- */

@@ -88,7 +88,7 @@ All course content lives in plain files under the data folder. Edit any of them 
 
 - data/vocab.js: the core course vocabulary, keyed by short ids.
 - data/dict.js: dictionary extras, comparison pairs, frequency bands, example sentences and the grammar encyclopedia.
-- data/library.js: the graded texts, the news items, the culture notes, the stroke examples and the media manifest.
+- data/library.js: the graded texts, the news items with the advanced archive, novels, academic texts, the comprehension quiz bank, the culture notes, the stroke examples and the media manifest.
 - data/ai.js: the offline knowledge base for the partner and the coach.
 - data/lessons.js: the 140 lessons in 20 tiers.
 - data/grammar.js, data/hangeul.js, data/placement.js: rules, the alphabet and the placement test.

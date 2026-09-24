@@ -732,6 +732,10 @@ input, select, textarea { font-family: inherit; }
 .ls-input input.text, .ls-input textarea { width: 100%; }
 .ls-done { padding: 16px 0; }
 .listen-select { width: 100%; margin-bottom: 10px; }
+.ls-quiz-q { margin-top: 14px; font-weight: 800; font-size: 0.95rem; background: var(--panel); border: 2px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+.ls-quiz-opts { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+.ls-opt { width: 100%; text-align: left; justify-content: flex-start; font-size: 0.92rem; }
+.ls-opt:disabled { opacity: 0.55; }
 .spk-wait { color: var(--blue); font-weight: 800; }
 .prone-word { font-size: 2rem; }
 
@@ -924,6 +928,9 @@ button { touch-action: manipulation; }
   .rd-actions { flex-direction: column; align-items: stretch; }
   .ls-actions { flex-direction: column; align-items: stretch; }
   .ls-question { font-size: 1.22rem; }
+  .kbd-row { gap: 3px; flex-wrap: wrap; }
+  .kbd-key { min-width: 30px; height: 38px; font-size: 0.9rem; }
+  .kbd-key.special { min-width: 50px; font-size: 0.78rem; }
   .chat-box { height: 44vh; }
   .chat-bubble { max-width: 92%; }
   .chat-input .lesson-btn { flex-shrink: 0; }
