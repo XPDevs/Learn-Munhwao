@@ -976,3 +976,40 @@ button { touch-action: manipulation; }
   .lib-tab { padding: 7px 12px; font-size: 0.78rem; }
   .cmp-side { min-width: 66px; font-size: 0.9rem; }
 }
+
+/* ---- Graded reader shelves ------------------------------------------ */
+.gr-shelf { margin-top: 14px; }
+.gr-btns { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 14px; }
+
+/* ---- Dialogue lines (role play) -------------------------------------- */
+.dl-line { background: var(--panel); border: 2px solid var(--border); border-radius: 12px; padding: 14px; margin: 8px 0; }
+.dl-who { font-size: 0.78rem; font-weight: 800; color: var(--blue); letter-spacing: 1px; margin-bottom: 4px; }
+.dl-ko { font-size: 1.15rem; font-weight: 800; margin-bottom: 4px; }
+.dl-en { color: var(--text-dim); font-size: 0.88rem; }
+.dl-hint { margin-top: 6px; }
+
+/* ---- Composition course ---------------------------------------------- */
+.cp-guide { background: var(--surface); border: 2px solid var(--border); border-radius: 12px; padding: 12px 14px; margin: 8px 0; font-size: 0.9rem; line-height: 1.6; }
+.cp-guide ul { margin: 6px 0 0 18px; padding: 0; }
+.cp-text { width: 100%; min-height: 120px; resize: vertical; font-size: 1rem; line-height: 1.6; }
+
+/* ---- CEFR pathway ----------------------------------------------------- */
+.rm-skills { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 14px; padding: 2px 0 6px; }
+.rm-skill { font-size: 0.78rem; color: var(--text-dim); }
+.rm-skill .rm-track { height: 6px; }
+.cd-list { list-style: none; margin: 0 0 12px; padding: 0 0 0 2px; font-size: 0.84rem; color: var(--text-dim); line-height: 1.6; }
+.cd-list li::before { content: "\25B8  "; color: var(--green); }
+
+/* ---- SM-2 spaced repetition console ------------------------------------ */
+.srs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; margin: 10px 0; }
+.srs-cell { background: var(--panel); border: 2px solid var(--border); border-radius: 12px; padding: 10px 8px; text-align: center; }
+.srs-num { font-size: 1.35rem; font-weight: 800; color: var(--green); }
+.srs-lab { font-size: 0.72rem; color: var(--text-dim); letter-spacing: 0.5px; }
+.srs-next { text-align: center; font-size: 0.8rem; color: var(--text-dim); margin: 8px 0; }
+#srs-btns { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 12px; }
+
+@media (max-width: 480px) {
+  .rm-skills { grid-template-columns: 1fr 1fr; }
+  .srs-grid { grid-template-columns: repeat(3, 1fr); }
+  #srs-btns .lesson-btn { width: calc(50% - 4px); }
+}

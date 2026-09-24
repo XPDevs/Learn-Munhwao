@@ -564,9 +564,35 @@
   };
 
   /* =====================================================================
-     ROADMAP A1 TO C2
+     ROADMAP: CEFR-STYLE PATHWAY
      ===================================================================== */
   FEATURES.roadmap = function (pane) {
+    if (!MH.CEFR) { FEATURES.roadmap_old(pane); return; }
+    var html = '<div class="rd-tip">The CEFR style pathway from A1 to C1. Each level has a grammar, vocabulary, reading, listening and speaking gauge computed from your progress. A level counts as reached when its overall gauge passes 70 per cent.</div>';
+    var cur = MH.cefrLevel ? MH.cefrLevel() : "A1";
+    MH.CEFR.forEach(function (c) {
+      var p = MH.cefrProgress ? MH.cefrProgress(c.level) : null;
+      var reached = p && p.overall >= 70;
+      html += '<div class="rm-row"><div class="rm-name">' + c.level + (cur === c.level ? ' <span style="color:var(--green);">CURRENT</span>' : "") + "</div>"
+        + '<div class="rm-track"><div class="rm-fill" style="width:' + (p ? p.overall : 0) + '%;"></div></div>'
+        + '<div class="rm-num">' + (p ? p.overall : 0) + "%</div></div>";
+      html += '<div class="rm-desc">' + MF.esc(c.desc) + "</div>";
+      if (p) {
+        html += '<div class="rm-skills">'
+          + skillGauge("Grammar", p.grammar) + skillGauge("Vocabulary", p.vocab) + skillGauge("Reading", p.reading) + skillGauge("Listening", p.listening) + skillGauge("Speaking", p.speaking)
+          + "</div>";
+      }
+      if (reached) html += '<div style="color:var(--green);font-size:0.8rem;font-weight:800;padding:2px 0 10px;">REACHED</div>';
+      html += '<div class="cd-list">';
+      (c.canDo || []).forEach(function (cd) { html += "<li>" + MF.esc(cd) + "</li>"; });
+      html += "</div>";
+    });
+    pane.innerHTML = html;
+  };
+  function skillGauge(name, val) {
+    return '<div class="rm-skill"><div>' + name + " " + val + '%</div><div class="rm-track"><div class="rm-fill" style="width:' + val + '%;"></div></div></div>';
+  }
+  FEATURES.roadmap_old = function (pane) {
     var bands = [
       { name: "A1", tiers: [1, 2, 3, 4], desc: "Greetings, alphabet, numbers, simple sentences." },
       { name: "A2", tiers: [5, 6, 7, 8], desc: "Daily routines, food, city life, past tense." },
@@ -588,6 +614,115 @@
     });
     pane.innerHTML = html;
   };
+
+  /* =====================================================================
+     FLASHCARDS: SM-2 SPACED REPETITION CONSOLE
+     Overrides the built in flash tool with a full review console.
+     ===================================================================== */
+  FEATURES.flash = function (pane) {
+    var html = '<div class="lesson-prompt">Spaced repetition console</div>'
+      + '<div class="rd-tip">The same schedule family as SM-2. Again resets a card, Hard and Good keep it growing, Easy pushes it forward. Cards with an interval of 21 days or more are matured. A card with eight lapses is a leech.</div>'
+      + '<div class="srs-grid" id="srs-stats"></div>'
+      + '<div class="ls-actions"><button class="lesson-btn continue" id="srs-review">Review due</button>'
+      + '<button class="lesson-btn check" id="srs-new">Study new words</button></div>'
+      + '<div id="srs-stage"></div>';
+    pane.innerHTML = html;
+    paintStats();
+    el("srs-review").addEventListener("click", function () { srsSession("due"); });
+    el("srs-new").addEventListener("click", function () { srsSession("new"); });
+  };
+
+  function srsStats() {
+    var now = Math.round(Date.now() / 1000);
+    var total = 0, due = 0, matured = 0, lapses = 0, easeSum = 0, easeN = 0;
+    Object.keys(state.srs || {}).forEach(function (k) {
+      var c = state.srs[k];
+      total++;
+      if (c.due <= now) due++;
+      if (c.interval >= 21) matured++;
+      if ((c.lapses || 0) >= 8) lapses++;
+      if (c.ease) { easeSum += c.ease; easeN++; }
+    });
+    return { total: total, due: due, matured: matured, lapses: lapses, avgEase: easeN ? (easeSum / easeN).toFixed(2) : "2.50" };
+  }
+  function paintStats() {
+    var box = el("srs-stats");
+    if (!box) return;
+    var s = srsStats();
+    box.innerHTML = statCell("Due", s.due) + statCell("Learning", Math.max(0, s.total - s.matured)) + statCell("Matured", s.matured) + statCell("Leeches", s.lapses) + statCell("Average ease", s.avgEase);
+  }
+  function statCell(label, val) {
+    return '<div class="srs-cell"><div class="srs-num">' + val + '</div><div class="srs-lab">' + label + "</div></div>";
+  }
+
+  var srsQ = [], srsI = 0, srsKind = "";
+  function srsSession(kind) {
+    var now = Math.round(Date.now() / 1000);
+    if (kind === "due") {
+      srsQ = Object.keys(state.srs || {}).filter(function (k) { return state.srs[k].due <= now; }).sort(function () { return Math.random() - 0.5; });
+    } else {
+      var have = new Set(Object.keys(state.srs || {}));
+      srsQ = (MH.VOCAB_KEYS || []).filter(function (k) { return !have.has(k); }).sort(function () { return Math.random() - 0.5; }).slice(0, 10);
+    }
+    srsI = 0;
+    srsKind = kind;
+    if (!srsQ.length) {
+      var stage = el("srs-stage");
+      stage.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:20px;">' + (kind === "new" ? "No new words left to add. You are learning everything in the bank." : "All caught up. Nothing is due right now.") + "</div>";
+      return;
+    }
+    srsStep();
+  }
+  function srsStep() {
+    var stage = el("srs-stage");
+    if (srsI >= srsQ.length) {
+      paintStats();
+      stage.innerHTML = '<div style="text-align:center;" class="ls-done"><div class="complete-icon">DONE</div><h2>Reviews complete</h2><p style="color:var(--text-dim);">Spaced repetition is up to date.</p><div class="hero-cta"><button class="lesson-btn check" id="srs-done">Back to console</button></div></div>';
+      el("srs-done").addEventListener("click", function () { FEATURES.flash(el("tool-pane")); });
+      return;
+    }
+    var key = srsQ[srsI];
+    var card = MH.vocab ? MH.vocab(key) : null;
+    var cur = srsGet(key);
+    stage.innerHTML = '<div class="ls-progress">Card ' + (srsI + 1) + " of " + srsQ.length + "</div>"
+      + '<div class="learn-card"><div class="learn-hangul">' + MF.esc(card ? card.h : key) + "</div>"
+      + (card && card.p ? '<div class="learn-phon">' + MF.esc(card.p) + "</div>" : "")
+      + '<button class="lesson-btn speaker" id="srs-speak" type="button">PLAY</button>'
+      + '<div class="learn-en" id="srs-en" style="display:none;">' + (card ? MF.esc(card.e) : "") + "</div>"
+      + (card && card.n ? '<div class="learn-note" id="srs-note" style="display:none;">' + MF.esc(card.n) + "</div>" : "")
+      + "</div>"
+      + '<div class="srs-next" id="srs-next" style="display:none;">Next interval: ' + nextInterval(cur, 3) + " days</div>"
+      + '<div class="spk-actions" id="srs-btns">'
+      + '<button class="lesson-btn wrong" id="srs-a">Again</button>'
+      + '<button class="lesson-btn ghost" id="srs-h">Hard</button>'
+      + '<button class="lesson-btn check" id="srs-g">Good</button>'
+      + '<button class="lesson-btn correct" id="srs-e">Easy</button></div>';
+    stage.querySelector("#srs-en").style.display = "block";
+    if (stage.querySelector("#srs-note")) stage.querySelector("#srs-note").style.display = "block";
+    stage.querySelector("#srs-next").style.display = "block";
+    if (card) speak(card.h);
+    el("srs-speak").addEventListener("click", function () { if (card) speak(card.h); });
+    el("srs-a").addEventListener("click", function () { srsGrade(key, 1); });
+    el("srs-h").addEventListener("click", function () { srsGrade(key, 3); });
+    el("srs-g").addEventListener("click", function () { srsGrade(key, 4); });
+    el("srs-e").addEventListener("click", function () { srsGrade(key, 5); });
+  }
+  function nextInterval(cur, q) {
+    var reps = cur.reps || 0;
+    var interval = cur.interval || 1;
+    var ease = cur.ease || 2.5;
+    if (q < 3) return 1;
+    reps++;
+    if (reps === 1) return 1;
+    if (reps === 2) return 3;
+    return Math.round(interval * ease);
+  }
+  function srsGrade(key, q) {
+    srsReview(key, q);
+    saveState();
+    srsI++;
+    srsStep();
+  }
 
   /* =====================================================================
      STUDY PLAN

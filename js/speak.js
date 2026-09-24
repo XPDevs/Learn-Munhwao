@@ -173,7 +173,7 @@
   window.renderSpeakHub = function () {
     var box = el("speak-content");
     box.innerHTML = '<div class="lib-tabs">'
-      + tab("practice", "Practice") + tab("pron", "Score") + tab("partner", "Partner") + tab("writing", "Writing") + tab("checker", "Checkers")
+      + tab("practice", "Practice") + tab("pron", "Score") + tab("partner", "Partner") + tab("scenarios", "Scenarios") + tab("compose", "Compose") + tab("writing", "Writing") + tab("checker", "Checkers")
       + "</div>" + '<div id="spk-pane"></div>';
     box.querySelectorAll(".lib-tab").forEach(function (b) {
       b.addEventListener("click", function () {
@@ -191,8 +191,152 @@
     if (tab === "practice") renderPracticeTab(pane);
     else if (tab === "pron") renderPronTab(pane);
     else if (tab === "partner") renderPartnerTab(pane);
+    else if (tab === "scenarios") renderScenariosTab(pane);
+    else if (tab === "compose") renderComposeTab(pane);
     else if (tab === "writing") renderWritingTab(pane);
     else renderCheckerTab(pane);
+  }
+
+  /* ---------- Advanced conversation scenarios ---------- */
+  var scCtx = null, scIdx = 0;
+  function renderScenariosTab(pane) {
+    var html = '<div class="rd-tip">Guided conversation scenarios for B1 and up. The app reads one role, you take the other. Follow the exchange, then answer the closing questions.</div>';
+    (MH.SCENARIOS || []).forEach(function (s) {
+      html += '<button class="rd-card" data-sc="' + s.id + '"><div class="rd-card-title">' + MF.esc(s.title) + '</div><div class="rd-card-desc">' + MF.esc(s.context || "") + '</div><div class="rd-card-meta"><span class="rd-tag">Scenario</span><span class="rd-tag" style="color:' + levelColorLocal(s.level) + ';">' + s.level + "</span></div></button>";
+    });
+    pane.innerHTML = html || '<p style="color:var(--text-dim);text-align:center;">No scenarios loaded.</p>';
+    pane.querySelectorAll(".rd-card").forEach(function (c) {
+      c.addEventListener("click", function () { openScenario(c.dataset.sc); });
+    });
+  }
+  function levelColorLocal(lv) {
+    return { "A1": "var(--green)", "A2": "var(--green-light)", "B1": "var(--orange)", "B2": "var(--blue)", "C1": "var(--purple)", "C2": "var(--teal)" }[lv] || "var(--green)";
+  }
+  function openScenario(id) {
+    var s = (MH.SCENARIOS || []).find(function (x) { return x.id === id; });
+    if (!s) { toast("Scenario not found"); return; }
+    scCtx = s; scIdx = 0;
+    var pane = el("spk-pane");
+    var html = '<button class="back-btn" id="sc-back">BACK TO SCENARIOS</button>';
+    html += '<div class="rd-head"><span class="rd-level-chip" style="border-color:' + levelColorLocal(s.level) + ';color:' + levelColorLocal(s.level) + ';">' + s.level + "</span><div><div class=\"rd-title\">" + MF.esc(s.title) + "</div><div class=\"rd-tag\">" + MF.esc(s.context || "") + "</div></div></div>";
+    html += '<div class="rd-tip">Read the scenario notes. ' + MF.esc((s.roles || [])[0] || "Speaker") + " is read by the app and " + MF.esc((s.roles || [])[1] || "You") + " is your role. Listen to each line, then say your line out loud.</div>";
+    html += '<div id="sc-stage"></div>';
+    pane.innerHTML = html;
+    el("sc-back").addEventListener("click", function () { renderScenariosTab(pane); });
+    playScStep();
+  }
+  function playScStep() {
+    if (!scCtx) return;
+    if (scIdx >= scCtx.steps.length) {
+      var stage = el("sc-stage");
+      stage.innerHTML = '<div style="text-align:center;" class="ls-done"><div class="complete-icon">SCENARIO</div><h2>Scenario complete</h2>'
+        + '<p style="color:var(--text-dim);margin:8px 0;">' + MF.esc(scCtx.end || "") + "</p>"
+        + '<div class="hero-cta"><button class="lesson-btn check" id="sc-more">More scenarios</button></div></div>';
+      el("sc-more").addEventListener("click", function () { renderScenariosTab(el("spk-pane")); });
+      var key = "sc:" + scCtx.id;
+      if (!(state.listenDone && state.listenDone[key])) {
+        state.listenDone = state.listenDone || {};
+        state.listenDone[key] = Date.now();
+        state.speaking = state.speaking || { attempts: 0, avgScore: 0 };
+        state.speaking.attempts = (state.speaking.attempts || 0) + 2;
+        addXp(20);
+        saveState();
+        updateTopbarStats();
+      }
+      return;
+    }
+    var st = scCtx.steps[scIdx];
+    var who = st.who === 0 ? (scCtx.roles || [])[0] : (scCtx.roles || [])[1];
+    var stage = el("sc-stage");
+    stage.innerHTML = '<div class="ls-progress">Step ' + (scIdx + 1) + " of " + scCtx.steps.length + "</div>"
+      + '<div class="dl-line"><div class="dl-who">' + MF.esc(who || "") + "</div>"
+      + '<div class="dl-ko">' + MF.esc(st.ko) + "</div><div class=\"dl-en\">" + MF.esc(st.en) + "</div></div>"
+      + (st.hint ? '<div style="color:var(--text-dim);font-size:0.85rem;margin-bottom:12px;">Hint: ' + MF.esc(st.hint) + "</div>" : "")
+      + '<div class="ls-actions"><button class="lesson-btn check" id="sc-play">Play line</button>'
+      + (MF.supportsSR() ? '<button class="lesson-btn continue" id="sc-speak">Speak your line</button>' : "")
+      + '<button class="lesson-btn ghost" id="sc-next">Continue</button></div>';
+    el("sc-play").addEventListener("click", function () { speak(st.ko, 0.85); });
+    var sp = el("sc-speak");
+    if (sp) sp.addEventListener("click", function () {
+      speak(st.ko, 0.85);
+      var fb = document.createElement("div");
+      fb.className = "feedback-banner";
+      stage.appendChild(fb);
+      MF.listen(function (heard) {
+        var score = MF.score(heard, st.ko);
+        fb.className = "feedback-banner " + (score >= 70 ? "correct" : "wrong");
+        fb.innerHTML = '<div class="fb-head">' + (score >= 70 ? "Good speaking" : "Keep trying") + " " + score + "</div><div class=\"fb-why\">Heard: " + MF.esc(heard) + "</div>";
+        touchSpeakingRef(score);
+      }, function () {
+        fb.innerHTML = '<span style="color:var(--text-dim);">Recognition unavailable. Say the line out loud.</span>';
+      });
+    });
+    el("sc-next").addEventListener("click", function () { scIdx++; playScStep(); });
+  }
+  function touchSpeakingRef(score) {
+    state.speaking = state.speaking || { attempts: 0, avgScore: 0 };
+    var n = state.speaking.attempts || 0;
+    state.speaking.avgScore = Math.round(((state.speaking.avgScore || 0) * n + score) / (n + 1));
+    state.speaking.attempts = n + 1;
+    saveState();
+  }
+
+  /* ---------- Advanced composition course ---------- */
+  function renderComposeTab(pane) {
+    var html = '<div class="rd-tip">A writing course from A2 to C2. Each lesson gives a goal, a prompt, a structure guide, useful phrases and a model answer. Write in the box, save your entry, and unlock the next lesson.</div>';
+    (MH.COMPOSITION || []).forEach(function (c) {
+      var done = state.writingEntries && state.writingEntries[c.id];
+      html += '<button class="rd-card" data-cp="' + c.id + '"><div class="rd-card-title">' + MF.esc(c.title) + '</div><div class="rd-card-meta"><span class="rd-tag">' + c.level + "</span>" + (done ? '<span style="color:var(--green);font-weight:800;">WROTE</span>' : '<span style="color:var(--text-dim);">New</span>') + "</div></button>";
+    });
+    pane.innerHTML = html || '<p style="color:var(--text-dim);text-align:center;">No composition lessons loaded.</p>';
+    pane.querySelectorAll(".rd-card").forEach(function (c) {
+      c.addEventListener("click", function () { openComposeLesson(c.dataset.cp); });
+    });
+  }
+  function openComposeLesson(id) {
+    var c = (MH.COMPOSITION || []).find(function (x) { return x.id === id; });
+    if (!c) { toast("Composition lesson not found"); return; }
+    var pane = el("spk-pane");
+    var saved = (state.writingEntries && state.writingEntries[c.id]) || "";
+    var html = '<button class="back-btn" id="cp-back">BACK TO COMPOSE</button>';
+    html += '<div class="rd-head"><span class="rd-level-chip" style="border-color:' + levelColorLocal(c.level) + ';color:' + levelColorLocal(c.level) + ';">' + c.level + "</span><div><div class=\"rd-title\">" + MF.esc(c.title) + "</div><div class=\"rd-tag\">Goal: " + MF.esc(c.goal || "") + "</div></div></div>";
+    html += '<div class="rd-tip"><b>Prompt:</b> ' + MF.esc(c.prompt || "") + "</div>";
+    html += '<div class="cp-guide"><div class="rd-vocab-head">Structure guide</div><ul>';
+    (c.guide || []).forEach(function (g) { html += "<li>" + MF.esc(g) + "</li>"; });
+    html += "</ul></div>";
+    html += '<div class="cp-guide"><div class="rd-vocab-head">Useful phrases</div>';
+    (c.phrases || []).forEach(function (p) {
+      html += '<div class="spk-line"><div class="spk-ko">' + MF.esc(p.ko) + ' <button class="mini-speak" data-tts="' + MF.esc(p.ko) + '">PLAY</button></div><div class="spk-en">' + MF.esc(p.en) + "</div></div>";
+    });
+    html += "</div>";
+    html += '<div class="ls-input"><textarea class="lesson-input cp-text" id="cp-text" rows="6" placeholder="Write here in Munhwao...">' + MF.esc(saved) + "</textarea></div>";
+    html += '<div class="ls-actions"><button class="lesson-btn continue" id="cp-save">Save my writing</button>'
+      + '<button class="lesson-btn ghost" id="cp-reveal">Show model answer</button></div>'
+      + '<div id="cp-model" style="display:none;" class="rd-para"><div class="rd-vocab-head">Model answer</div><div class="rd-ko">' + MF.esc(c.model.ko) + "</div><div class=\"rd-en\">" + MF.esc(c.model.en) + "</div></div>"
+      + '<div id="cp-fb"></div>';
+    pane.innerHTML = html;
+    el("cp-back").addEventListener("click", function () { renderComposeTab(pane); });
+    pane.querySelectorAll(".mini-speak").forEach(function (b) { b.addEventListener("click", function () { speak(b.dataset.tts); }); });
+    el("cp-reveal").addEventListener("click", function () {
+      var m = el("cp-model");
+      m.style.display = m.style.display === "none" || !m.style.display ? "block" : "none";
+    });
+    el("cp-save").addEventListener("click", function () {
+      var txt = el("cp-text").value.trim();
+      if (!txt) { toast("Write something first."); return; }
+      state.writingEntries = state.writingEntries || {};
+      state.writingEntries[c.id] = txt;
+      saveState();
+      var gained = false;
+      if (!state.completedQuests) state.completedQuests = {};
+      addXp(15);
+      saveState();
+      updateTopbarStats();
+      var fb = el("cp-fb");
+      fb.innerHTML = '<div class="feedback-banner correct" id="cp-done"><div class="fb-head">Saved +15 XP</div></div>';
+      el("cp-done").addEventListener("click", function () { renderComposeTab(el("spk-pane")); });
+      toast("Composition saved. +15 XP");
+    });
   }
 
   /* ---------- Practice tab ---------- */

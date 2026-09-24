@@ -148,7 +148,7 @@
     MF.ready();
     var box = el("library-content");
     box.innerHTML = '<div class="lib-tabs">'
-      + tabBtn("read", "Reading") + tabBtn("news", "News") + tabBtn("listen", "Listening") + tabBtn("novels", "Novels") + tabBtn("academic", "Academic") + tabBtn("culture", "Culture") + tabBtn("media", "Media")
+      + tabBtn("read", "Reading") + tabBtn("articles", "Articles") + tabBtn("listen", "Listening") + tabBtn("dialogues", "Dialogues") + tabBtn("literature", "Literature") + tabBtn("textbook", "Textbook") + tabBtn("media", "Media")
       + "</div>" + '<div id="lib-pane"></div>';
     box.querySelectorAll(".lib-tab").forEach(function (b) {
       b.addEventListener("click", function () {
@@ -167,10 +167,11 @@
   function renderLibPane(tab) {
     var pane = el("lib-pane");
     if (tab === "read") renderReadTab(pane);
-    else if (tab === "news") renderNewsTab(pane);
+    else if (tab === "articles") renderArticlesTab(pane);
     else if (tab === "listen") renderListenTab(pane);
-    else if (tab === "novels") renderNovelsTab(pane);
-    else if (tab === "academic") renderAcademicTab(pane);
+    else if (tab === "dialogues") renderDialoguesTab(pane);
+    else if (tab === "literature") renderLiteratureTab(pane);
+    else if (tab === "textbook") renderTextbookTab(pane);
     else if (tab === "media") renderMediaTab(pane);
     else renderCultureTab(pane);
   }
@@ -193,11 +194,149 @@
         html += '<button class="rd-card" data-id="' + t.id + '"><div class="rd-card-title">' + MF.esc(t.title) + '</div><div class="rd-card-desc">' + MF.esc(t.intro || "") + '</div><div class="rd-card-meta"><span class="rd-tag">' + t.tag + "</span>" + (read ? '<span style="color:var(--green);font-weight:800;">READ</span>' : '<span style="color:var(--text-dim);">New</span>') + "</div></button>";
       });
       html += "</div>";
+      if (MH.passages && MH.passages(lv).length) html += gradedShelfHtml(lv);
     });
     pane.innerHTML = html || '<p style="color:var(--text-dim);text-align:center;">No texts loaded.</p>';
     pane.querySelectorAll(".rd-card").forEach(function (c) {
-      c.addEventListener("click", function () { renderReader(c.dataset.id); });
+      if (c.dataset.pid) c.addEventListener("click", function () { openPassage(c.dataset.pid); });
+      else c.addEventListener("click", function () { renderReader(c.dataset.id); });
     });
+    pane.querySelectorAll(".gr-shelf").forEach(function (s) {
+      var lv = s.dataset.level;
+      var rand = s.querySelector(".gr-rand");
+      if (rand) rand.addEventListener("click", function () {
+        openPassage(MH._pick(MH.passages(lv)).id);
+      });
+      var br = s.querySelector(".gr-browse");
+      if (br) br.addEventListener("click", function () { renderReaderBrowse(lv); });
+    });
+  }
+
+  function gradedShelfHtml(lv) {
+    var n = MH.passages(lv).length;
+    return '<div class="gr-shelf rd-level" data-level="' + lv + '">'
+      + '<div class="rd-level-head"><span class="rd-level-chip" style="border-color:' + levelColor(lv) + ';color:' + levelColor(lv) + ';">' + lv + "</span><span>Graded readers: " + n + " generated passages with a comprehension check</span></div>"
+      + '<div class="gr-btns"><button class="lesson-btn ghost gr-browse">Browse readers</button>'
+      + '<button class="lesson-btn check gr-rand">Open a random reader</button></div></div>';
+  }
+
+  function renderReaderBrowse(level) {
+    if (!MH.passages) return;
+    var list = MH.passages(level);
+    var PAGE = 30, page = 0;
+    var pane = el("lib-pane");
+    function paint() {
+      var slice = list.slice(page * PAGE, (page + 1) * PAGE);
+      var html = '<button class="back-btn" id="gr-back">BACK TO READING</button>';
+      html += '<div class="rd-head"><span class="rd-level-chip" style="border-color:' + levelColor(level) + ';color:' + levelColor(level) + ';">' + level + "</span><div><div class=\"rd-title\">Graded readers</div><div class=\"rd-tag\">" + list.length + " passages in this level</div></div></div>";
+      html += '<div class="rd-tip">Fully generated offline. Every passage has two comprehension questions at the end. Tap a word to see its meaning.</div>';
+      slice.forEach(function (p) {
+        var read = state.readTexts && state.readTexts[p.id];
+        html += '<button class="rd-card" data-pid="' + p.id + '"><div class="rd-card-title">' + MF.esc(p.title) + '</div><div class="rd-card-desc">' + MF.esc(p.intro || "") + '</div><div class="rd-card-meta"><span class="rd-tag">Reader</span>' + (read ? '<span style="color:var(--green);font-weight:800;">READ</span>' : '<span style="color:var(--text-dim);">New</span>') + "</div></button>";
+      });
+      if (slice.length === PAGE || (page + 1) * PAGE < list.length) {
+        html += '<div class="ls-actions" style="margin-top:14px;"><button class="lesson-btn continue" id="gr-more">More readers</button></div>';
+      }
+      pane.innerHTML = html;
+      pane.querySelectorAll(".rd-card").forEach(function (c) { c.addEventListener("click", function () { openPassage(c.dataset.pid); }); });
+      el("gr-back").addEventListener("click", renderLibraryHub);
+      var more = el("gr-more");
+      if (more) more.addEventListener("click", function () { page++; paint(); window.scrollTo(0, 0); });
+    }
+    paint();
+  }
+
+  function openPassage(id) {
+    var level = String(id || "").slice(1, 3);
+    var list = (level && MH.passages) ? (MH.PASSAGES[level] || MH.passages(level)) : [];
+    var p = list.find(function (x) { return x.id === id; });
+    if (p) renderPassageReader(p);
+    else toast("Reader not found");
+  }
+
+  /* ---------- passage reader with comprehension ---------- */
+  function renderPassageReader(p) {
+    var pane = el("lib-pane");
+    var html = '<button class="back-btn" id="ps-back" data-back="' + p.level + '">BACK TO READING</button>';
+    html += '<div class="rd-head"><span class="rd-level-chip" style="border-color:' + levelColor(p.level) + ';color:' + levelColor(p.level) + ';">' + p.level + "</span><div><div class=\"rd-title\">" + MF.esc(p.title) + "</div><div class=\"rd-tag\">Graded reader</div></div></div>";
+    html += '<div class="rd-tip">Tap any word to see its meaning. Listen, then read out loud. Answer the questions at the end.</div>';
+    html += '<div id="rd-tapinfo" class="rd-tapinfo"></div>';
+    (p.paras || []).forEach(function (pa, i) {
+      html += '<div class="rd-para"><div class="rd-para-row">'
+        + '<button class="mini-speak" data-tts="' + MF.esc(pa.ko) + '">LISTEN</button>'
+        + '<button class="mini-speak ghost" data-rep="' + i + '">REPEAT</button>'
+        + "</div>"
+        + '<div class="rd-ko">' + MF.tokHTML(pa.ko, p.gloss) + "</div>"
+        + '<div class="rd-en">' + MF.esc(pa.en) + "</div></div>";
+    });
+    html += '<div id="ps-quiz"></div>';
+    pane.innerHTML = html;
+    el("ps-back").addEventListener("click", function () { renderReaderBrowse(p.level); });
+    pane.querySelectorAll(".rd-tok").forEach(function (sp) {
+      sp.addEventListener("click", function () { showTapWord(sp.dataset.w, p.gloss); });
+    });
+    pane.querySelectorAll(".mini-speak").forEach(function (b) {
+      if (b.dataset.tts) b.addEventListener("click", function () { speak(b.dataset.tts); });
+      if (b.dataset.rep) b.addEventListener("click", function () {
+        var pa = p.paras[parseInt(b.dataset.rep, 10)];
+        if (pa) repeatSentence(pa.ko);
+      });
+    });
+    renderPassageQuiz(p);
+  }
+
+  function renderPassageQuiz(p) {
+    var box = el("ps-quiz");
+    if (!box) return;
+    var idx = 0, right = 0;
+    function paint() {
+      if (idx >= (p.q || []).length) {
+        var all = p.q.length;
+        var done = state.readTexts && state.readTexts[p.id];
+        var gained = false;
+        if (!done) {
+          state.readTexts = state.readTexts || {};
+          state.readTexts[p.id] = Date.now();
+          if (all && right === all) { addXp(20); gained = true; }
+          else { addXp(10); }
+          saveState();
+          updateTopbarStats();
+        }
+        box.innerHTML = '<div style="text-align:center;" class="ls-done"><div class="complete-icon">DONE</div>'
+          + '<h2>' + (done ? "Reader finished" : "Reading completed") + "</h2>"
+          + '<p style="color:var(--text-dim);margin:8px 0;">You answered ' + right + " of " + all + " correctly.</p>"
+          + (gained ? '<p style="color:var(--green);font-weight:800;">+20 XP</p>' : "")
+          + '<div class="hero-cta"><button class="lesson-btn check" id="ps-again">Another reader</button></div></div>';
+        el("ps-again").addEventListener("click", function () { renderReaderBrowse(p.level); });
+        return;
+      }
+      var q = p.q[idx];
+      box.innerHTML = '<div class="ls-progress">Question ' + (idx + 1) + " of " + p.q.length + "</div>"
+        + '<div class="ls-quiz-q">' + MF.esc(q.q) + "</div>"
+        + '<div class="ls-quiz-opts" id="ps-opts"></div>';
+      var opts = el("ps-opts");
+      q.opts.forEach(function (o, oi) {
+        var b = document.createElement("button");
+        b.className = "lesson-btn ghost ls-opt";
+        b.textContent = o;
+        b.addEventListener("click", function () {
+          var good = oi === q.a;
+          if (good) right++;
+          var fb = document.createElement("div");
+          fb.className = "feedback-banner " + (good ? "correct" : "wrong");
+          fb.innerHTML = '<div class="fb-head">' + (good ? "Correct" : "Not quite") + "</div>";
+          box.appendChild(fb);
+          var next = document.createElement("button");
+          next.className = "lesson-btn continue";
+          next.textContent = "Continue";
+          next.addEventListener("click", function () { idx++; paint(); });
+          box.appendChild(next);
+          [].forEach.call(opts.children, function (x) { x.disabled = true; });
+        });
+        opts.appendChild(b);
+      });
+    }
+    paint();
   }
 
   function lvdesc(lv) {
@@ -295,9 +434,10 @@
     saveState();
   }
 
-  /* ---------- News tab with advanced archive ---------- */
-  function renderNewsTab(pane) {
-    var html = '<div class="rd-tip">The news of today in the plain formal register, plus an advanced archive of longer editorials and features.</div>';
+  /* ---------- Articles tab: news, archive and real-world collection ---------- */
+  function renderArticlesTab(pane) {
+    MF.ready();
+    var html = '<div class="rd-tip">The news of today in the plain formal register, an advanced archive of editorials, and a collection of realistic articles from daily life to science and culture.</div>';
     html += '<div class="rd-level"><div class="rd-level-head"><span class="rd-level-chip" style="border-color:var(--orange);color:var(--orange);">Today</span><span style="color:var(--text-dim);font-size:0.82rem;">Short items in daily style</span></div>';
     (MH.NEWS || []).forEach(function (n) {
       html += newsCard(n, "news");
@@ -308,14 +448,31 @@
       html += newsCard(n, "archive");
     });
     html += "</div>";
+    html += '<div class="rd-level"><div class="rd-level-head"><span class="rd-level-chip" style="border-color:var(--teal);color:var(--teal);">Real-world collection</span><span style="color:var(--text-dim);font-size:0.82rem;">' + (MH.ARTICLES || []).length + " genuine style articles across themes</span></div>";
+    (MH.ARTICLES || []).forEach(function (a) {
+      var read = state.readTexts && state.readTexts[a.id];
+      html += '<button class="rd-card" data-id="' + a.id + '" data-src="articles"><div class="rd-card-title">' + MF.esc(a.title) + '</div><div class="rd-card-meta"><span class="rd-tag">' + MF.esc(a.cat) + '</span><span class="rd-tag" style="color:' + levelColor(a.level) + ';">' + a.level + '</span>' + (read ? '<span style="color:var(--green);font-weight:800;">READ</span>' : "") + "</div></button>";
+    });
+    html += "</div>";
     pane.innerHTML = html;
     pane.querySelectorAll(".rd-card").forEach(function (c) {
+      if (c.dataset.src === "articles") {
+        c.addEventListener("click", function () {
+          var a = (MH.ARTICLES || []).find(function (x) { return x.id === c.dataset.id; });
+          if (!a) return;
+          openArticle({ title: a.title, tag: a.cat, paras: a.paras, gloss: a.gloss, id: a.id }, "BACK TO ARTICLES", function () {
+            renderLibraryHub();
+            setTimeout(function () { renderArticlesTab(el("lib-pane")); }, 0);
+          }, { key: "news", level: a.level });
+        });
+        return;
+      }
       var src = c.dataset.src === "archive" ? (MH.ARCHIVE || []) : (MH.NEWS || []);
       c.addEventListener("click", function () {
         var n = src.find(function (x) { return x.id === c.dataset.id; });
         if (n) openArticle({ title: n.title, tag: n.cat, paras: n.paras, gloss: n.gloss, id: n.id }, "BACK TO NEWS", function () {
           renderLibraryHub();
-          setTimeout(function () { renderNewsTab(el("lib-pane")); }, 0);
+          setTimeout(function () { renderArticlesTab(el("lib-pane")); }, 0);
         }, { key: "news", level: c.dataset.src === "archive" ? "ADV" : "" });
       });
     });
@@ -365,54 +522,247 @@
     });
   }
 
-  /* ---------- Novels and literature tab ---------- */
-  function renderNovelsTab(pane) {
-    var html = '<div class="rd-tip">Novels and literary works in Munhwao, split into short parts. Tap any word to see its meaning.</div>';
+  /* ---------- Literature tab: novels, academic and culture ---------- */
+  function renderLiteratureTab(pane) {
+    var html = '<div class="rd-tip">Literature and ideas: novels split into short parts, academic extracts and culture notes. All in Munhwao with tap to translate.</div>';
     var works = {};
     (MH.NOVELS || []).forEach(function (n) { (works[n.work] = works[n.work] || []).push(n); });
     Object.keys(works).forEach(function (w) {
       html += '<div class="rd-level"><div class="rd-level-head"><span class="rd-level-chip" style="border-color:var(--purple);color:var(--purple);">' + MF.esc(w) + "</span></div>";
       works[w].forEach(function (n) {
-        html += '<button class="rd-card" data-id="' + n.id + '"><div class="rd-card-title">' + MF.esc(n.title) + '</div><div class="rd-card-meta"><span class="rd-tag">Novel</span><span class="rd-tag" style="color:var(--purple);">' + MF.esc(n.part) + "</span></div></button>";
+        html += '<button class="rd-card" data-acc="novel" data-id="' + n.id + '"><div class="rd-card-title">' + MF.esc(n.title) + '</div><div class="rd-card-meta"><span class="rd-tag">Novel</span><span class="rd-tag" style="color:var(--purple);">' + MF.esc(n.part) + "</span></div></button>";
       });
       html += "</div>";
     });
-    pane.innerHTML = html || '<p style="color:var(--text-dim);text-align:center;">No novels loaded.</p>';
+    if ((MH.ACADEMIC || []).length) {
+      html += '<div class="rd-level"><div class="rd-level-head"><span class="rd-level-chip" style="border-color:var(--teal);color:var(--teal);">Academic</span><span style="color:var(--text-dim);font-size:0.82rem;">Lecture and essay extracts</span></div>';
+      (MH.ACADEMIC || []).forEach(function (a) {
+        html += '<button class="rd-card" data-acc="academic" data-id="' + a.id + '"><div class="rd-card-title">' + MF.esc(a.title) + '</div><div class="rd-card-meta"><span class="rd-tag">Academic</span><span class="rd-tag" style="color:var(--teal);">' + MF.esc(a.field || "") + "</span></div></button>";
+      });
+      html += "</div>";
+    }
+    var cgroups = {};
+    (MH.CULTURE || []).forEach(function (c) { (cgroups[c.tag] = cgroups[c.tag] || []).push(c); });
+    Object.keys(cgroups).forEach(function (tag) {
+      html += '<div class="rd-level"><div class="rd-level-head"><span class="rd-level-chip" style="border-color:var(--orange);color:var(--orange);">' + MF.esc(tag) + "</span></div>";
+      cgroups[tag].forEach(function (c) {
+        html += '<button class="rd-card" data-acc="culture" data-id="' + c.id + '"><div class="rd-card-title">' + MF.esc(c.title) + "</div></button>";
+      });
+      html += "</div>";
+    });
+    pane.innerHTML = html || '<p style="color:var(--text-dim);text-align:center;">No literature loaded.</p>';
     pane.querySelectorAll(".rd-card").forEach(function (c) {
       c.addEventListener("click", function () {
-        var n = (MH.NOVELS || []).find(function (x) { return x.id === c.dataset.id; });
-        if (n) openArticle({ title: n.title, tag: "novel", paras: n.paras, gloss: n.gloss, id: n.id }, "BACK TO NOVELS", function () {
-          renderLibraryHub();
-          setTimeout(function () { renderNovelsTab(el("lib-pane")); }, 0);
-        }, { key: "novel" });
+        var acc = c.dataset.acc;
+        if (acc === "novel") {
+          var n = (MH.NOVELS || []).find(function (x) { return x.id === c.dataset.id; });
+          if (n) openArticle({ title: n.title, tag: "novel", paras: n.paras, gloss: n.gloss, id: n.id }, "BACK TO LITERATURE", function () { renderLiteratureTabBack(); }, { key: "novel" });
+        } else if (acc === "academic") {
+          var a = (MH.ACADEMIC || []).find(function (x) { return x.id === c.dataset.id; });
+          if (a) openArticle({ title: a.title, tag: a.field || "academic", paras: a.paras, gloss: a.gloss, id: a.id }, "BACK TO LITERATURE", function () { renderLiteratureTabBack(); }, { key: "acad", level: a.level || "" });
+        } else {
+          var cu = (MH.CULTURE || []).find(function (x) { return x.id === c.dataset.id; });
+          if (cu) openArticle({ title: cu.title, tag: cu.tag, paras: cu.paras, gloss: cu.gloss, id: cu.id }, "BACK TO LITERATURE", function () { renderLiteratureTabBack(); }, { key: "culture" });
+        }
       });
     });
   }
+  function renderLiteratureTabBack() {
+    renderLibraryHub();
+    setTimeout(function () { renderLiteratureTab(el("lib-pane")); }, 0);
+  }
 
-  /* ---------- Academic reading tab ---------- */
-  function renderAcademicTab(pane) {
-    var html = '<div class="rd-tip">Academic reading: short lecture and essay extracts in formal Munhwao. Tap any word to see its meaning.</div>';
-    (MH.ACADEMIC || []).forEach(function (a) {
-      html += '<button class="rd-card" data-id="' + a.id + '"><div class="rd-card-title">' + MF.esc(a.title) + '</div><div class="rd-card-meta"><span class="rd-tag">Academic</span><span class="rd-tag" style="color:var(--teal);">' + MF.esc(a.field || "") + "</span></div></button>";
+  /* ---------- Dialogue courses tab ---------- */
+  function renderDialoguesTab(pane) {
+    MF.ready();
+    var html = '<div class="rd-tip">Dialogue courses built like real exchanges. Open a dialogue, listen to each line, take the role of the learner and answer the questions at the end.</div>';
+    var groups = {};
+    (MH.DIALOGUES || []).forEach(function (d) { (groups[d.level] = groups[d.level] || []).push(d); });
+    var order = ["A1", "A2", "B1", "B2", "C1", "C2"];
+    order.forEach(function (lv) {
+      if (!groups[lv]) return;
+      html += '<div class="rd-level"><div class="rd-level-head"><span class="rd-level-chip" style="border-color:' + levelColor(lv) + ';color:' + levelColor(lv) + ';">' + lv + "</span><span>" + groups[lv].length + " dialogues</span></div>";
+      groups[lv].forEach(function (d) {
+        var done = state.listenDone && state.listenDone["dlg:" + d.id];
+        html += '<button class="rd-card" data-dlg="' + d.id + '"><div class="rd-card-title">' + MF.esc(d.title) + '</div><div class="rd-card-desc">' + MF.esc(d.context || "") + '</div><div class="rd-card-meta"><span class="rd-tag">Dialogue</span>' + (done ? '<span style="color:var(--green);font-weight:800;">DONE</span>' : '<span style="color:var(--text-dim);">New</span>') + "</div></button>";
+      });
+      html += "</div>";
     });
-    pane.innerHTML = html || '<p style="color:var(--text-dim);text-align:center;">No academic texts loaded.</p>';
+    pane.innerHTML = html || '<p style="color:var(--text-dim);text-align:center;">No dialogues loaded.</p>';
+    pane.querySelectorAll(".rd-card").forEach(function (c) {
+      c.addEventListener("click", function () { renderDialogue(c.dataset.dlg); });
+    });
+  }
+
+  var dlCtx = null, dlLineIdx = 0, dlRight = 0, dlIdx = 0;
+  function renderDialogue(id) {
+    var d = (MH.DIALOGUES || []).find(function (x) { return x.id === id; });
+    if (!d) { toast("Dialogue not found"); return; }
+    dlCtx = d;
+    dlLineIdx = 0; dlRight = 0; dlIdx = 0;
+    var pane = el("lib-pane");
+    var html = '<button class="back-btn" id="dl-back">BACK TO DIALOGUES</button>';
+    html += '<div class="rd-head"><span class="rd-level-chip" style="border-color:' + levelColor(d.level) + ';color:' + levelColor(d.level) + ';">' + d.level + "</span><div><div class=\"rd-title\">" + MF.esc(d.title) + "</div><div class=\"rd-tag\">" + MF.esc(d.context || "") + "</div></div></div>";
+    html += '<div class="rd-tip">The first speaker is read by the app. The line marked You is yours to say out loud, then check it.</div>';
+    html += '<div id="dl-role"></div><div id="dl-quiz"></div>';
+    pane.innerHTML = html;
+    el("dl-back").addEventListener("click", function () { renderDialoguesTab(el("lib-pane")); });
+    playDlLine();
+  }
+
+  function playDlLine() {
+    if (!dlCtx) return;
+    if (dlLineIdx >= dlCtx.lines.length) {
+      var pane = el("lib-pane");
+      var role = el("dl-role");
+      if (role) role.innerHTML = '<div style="text-align:center;" class="ls-done"><div class="complete-icon">ROLE PLAY</div><h2>Exchange finished</h2><p style="color:var(--text-dim);margin:8px 0;">Now answer the dialogue questions.</p></div>';
+      renderDlQuiz();
+      return;
+    }
+    var line = dlCtx.lines[dlLineIdx];
+    var whoName = dlCtx.roles && dlCtx.roles[line.who] ? dlCtx.roles[line.who] : (line.who === "A" || line.who === 0 ? "Speaker" : "You");
+    var role = el("dl-role");
+    if (!role) return;
+    role.innerHTML = '<div class="dl-line"><div class="dl-who">' + MF.esc(whoName) + "</div>"
+      + '<div class="dl-ko">' + MF.esc(line.ko) + "</div><div class=\"dl-en\">" + MF.esc(line.en) + "</div>";
+    if (line.who === "B" || line.who === 1) {
+      role.innerHTML += '<div class="dl-hint" style="color:var(--text-dim);font-size:0.85rem;">' + MF.esc(line.hint || "") + "</div>";
+      role.innerHTML += '<div class="ls-actions"><button class="lesson-btn check" id="dl-listen">Listen again</button>'
+        + (MF.supportsSR() ? '<button class="lesson-btn continue" id="dl-speak">Speak and check</button>' : "")
+        + '<button class="lesson-btn ghost" id="dl-next">Continue</button></div>';
+      var li = el("dl-listen");
+      if (li) li.addEventListener("click", function () { speak(line.ko, 0.85); });
+      var sp = el("dl-speak");
+      if (sp) sp.addEventListener("click", function () {
+        speak(line.ko, 0.85);
+        var fb = document.createElement("div");
+        fb.className = "feedback-banner";
+        var roleb = el("dl-role");
+        roleb.appendChild(fb);
+        MF.listen(function (heard) {
+          var score = MF.score(heard, line.ko);
+          fb.className = "feedback-banner " + (score >= 70 ? "correct" : "wrong");
+          fb.innerHTML = '<div class="fb-head">' + (score >= 70 ? "Good speaking" : "Keep trying") + " " + score + "</div><div class=\"fb-why\">Heard: " + MF.esc(heard) + "</div>";
+          touchSpeakingRef(score);
+        }, function () {
+          fb.innerHTML = '<span style="color:var(--text-dim);">Recognition unavailable. Say the line out loud.</span>';
+        });
+      });
+      el("dl-next").addEventListener("click", dlNext);
+    } else {
+      role.innerHTML += '<div class="ls-actions"><button class="lesson-btn check" id="dl-play">Play line</button><button class="lesson-btn continue" id="dl-next">Continue</button></div>';
+      el("dl-play").addEventListener("click", function () { speak(line.ko, 0.85); });
+      el("dl-next").addEventListener("click", dlNext);
+    }
+  }
+
+  function touchSpeakingRef(score) {
+    state.speaking = state.speaking || { attempts: 0, avgScore: 0 };
+    var n = state.speaking.attempts || 0;
+    state.speaking.avgScore = Math.round(((state.speaking.avgScore || 0) * n + score) / (n + 1));
+    state.speaking.attempts = n + 1;
+    saveState();
+  }
+  function dlNext() { dlLineIdx++; playDlLine(); }
+
+  function renderDlQuiz() {
+    if (!dlCtx) return;
+    var box = el("dl-quiz");
+    if (!box) return;
+    var items = dlCtx.q || [];
+    if (!items.length) { dlDone(); return; }
+    function paint() {
+      if (dlIdx >= items.length) { dlDone(); return; }
+      var q = items[dlIdx];
+      box.innerHTML = '<div class="ls-progress">Question ' + (dlIdx + 1) + " of " + items.length + "</div>"
+        + '<div class="ls-quiz-q">' + MF.esc(q.q) + "</div>"
+        + '<div class="ls-quiz-opts" id="dl-opts"></div>';
+      var opts = el("dl-opts");
+      q.opts.forEach(function (o, oi) {
+        var b = document.createElement("button");
+        b.className = "lesson-btn ghost ls-opt";
+        b.textContent = o;
+        b.addEventListener("click", function () {
+          var good = oi === q.a;
+          if (good) dlRight++;
+          var fb = document.createElement("div");
+          fb.className = "feedback-banner " + (good ? "correct" : "wrong");
+          fb.innerHTML = '<div class="fb-head">' + (good ? "Correct" : "Not quite") + "</div>";
+          box.appendChild(fb);
+          var next = document.createElement("button");
+          next.className = "lesson-btn continue";
+          next.textContent = "Continue";
+          next.addEventListener("click", function () { dlIdx++; paint(); });
+          box.appendChild(next);
+          [].forEach.call(opts.children, function (x) { x.disabled = true; });
+        });
+        opts.appendChild(b);
+      });
+    }
+    function dlDone() {
+      var key = "dlg:" + dlCtx.id;
+      var gained = false;
+      if (!(state.listenDone && state.listenDone[key])) {
+        state.listenDone = state.listenDone || {};
+        state.listenDone[key] = Date.now();
+        addXp(15);
+        saveState();
+        updateTopbarStats();
+        gained = true;
+      }
+      box.innerHTML = '<div style="text-align:center;" class="ls-done"><div class="complete-icon">DONE</div><h2>Dialogue complete</h2>'
+        + '<p style="color:var(--text-dim);margin:8px 0;">You answered ' + dlRight + " of " + items.length + " correctly.</p>"
+        + (gained ? '<p style="color:var(--green);font-weight:800;">+15 XP</p>' : "")
+        + '<div class="hero-cta"><button class="lesson-btn check" id="dl-more">More dialogues</button></div></div>';
+      el("dl-more").addEventListener("click", function () { renderDialoguesTab(el("lib-pane")); });
+    }
+    paint();
+  }
+
+  /* ---------- Textbook tab ---------- */
+  function renderTextbookTab(pane) {
+    var html = '<div class="rd-tip">The full course as a textbook. Each unit is one tier with every lesson as a chapter. Open a chapter to study it in the course player.</div>';
+    var byTier = {};
+    (MH.LESSONS || []).forEach(function (l) { (byTier[l.tier] = byTier[l.tier] || []).push(l); });
+    (MH.TIERS || []).forEach(function (t) {
+      var chs = byTier[t.id] || [];
+      html += '<div class="rd-level"><div class="rd-level-head"><span class="rd-level-chip" style="border-color:var(--blue);color:var(--blue);">Unit ' + t.id + "</span><span>" + MF.esc(t.name || "") + "</span></div>";
+      chs.forEach(function (l) {
+        var done = state.lessonCompletion && state.lessonCompletion[l.id];
+        html += '<button class="rd-card" data-lesson="' + l.id + '"><div class="rd-card-title">Chapter: ' + MF.esc(l.title) + '</div><div class="rd-card-meta"><span class="rd-tag">Lesson ' + l.id + "</span>" + (done ? '<span style="color:var(--green);font-weight:800;">DONE</span>' : '<span style="color:var(--text-dim);">Open</span>') + "</div></button>";
+      });
+      html += "</div>";
+    });
+    pane.innerHTML = html;
     pane.querySelectorAll(".rd-card").forEach(function (c) {
       c.addEventListener("click", function () {
-        var a = (MH.ACADEMIC || []).find(function (x) { return x.id === c.dataset.id; });
-        if (a) openArticle({ title: a.title, tag: a.field || "academic", paras: a.paras, gloss: a.gloss, id: a.id }, "BACK TO ACADEMIC", function () {
-          renderLibraryHub();
-          setTimeout(function () { renderAcademicTab(el("lib-pane")); }, 0);
-        }, { key: "acad", level: a.level || "" });
+        if (typeof startLesson === "function") {
+          showPage("learn");
+          startLesson(c.dataset.lesson);
+        }
       });
     });
   }
 
   /* ---------- Listening tab ---------- */
   function renderListenTab(pane) {
-    var html = '<div class="rd-tip">Three ways to train your ears. Dictation plays a sentence and you type it. Shadowing plays a sentence and you repeat it out loud. The comprehension quiz plays a sentence and asks a question about it.</div>';
+    MF.ready();
+    var html = '<div class="rd-tip">Three ways to train your ears, plus full listening courses with scripts and comprehension questions.</div>';
     html += '<div class="ls-modes">'
       + modeBtn("dict") + modeBtn("shadow") + modeBtn("quiz")
       + "</div>" + '<div id="ls-mode-wrap"></div>';
+    var groups = {};
+    (MH.LISTEN_COURSES || []).forEach(function (c) { (groups[c.level] = groups[c.level] || []).push(c); });
+    var order = ["A1", "A2", "B1", "B2", "C1", "C2"];
+    order.forEach(function (lv) {
+      if (!groups[lv]) return;
+      html += '<div class="rd-level"><div class="rd-level-head"><span class="rd-level-chip" style="border-color:' + levelColor(lv) + ';color:' + levelColor(lv) + ';">' + lv + "</span><span>Listening course</span></div>";
+      groups[lv].forEach(function (c) {
+        var done = state.listenDone && state.listenDone[c.id];
+        html += '<button class="rd-card" data-lc="' + c.id + '"><div class="rd-card-title">' + MF.esc(c.title) + '</div><div class="rd-card-meta"><span class="rd-tag">Lesson</span>' + (done ? '<span style="color:var(--green);font-weight:800;">DONE</span>' : '<span style="color:var(--text-dim);">New</span>') + "</div></button>";
+      });
+      html += "</div>";
+    });
     pane.innerHTML = html;
     function modeBtn(m) {
       if (m === "dict") return '<button class="lib-tab ls-mode" data-mode="dict">Dictation</button>';
@@ -429,7 +779,10 @@
       }
       var sel = document.createElement("select");
       sel.className = "lesson-input listen-select";
-      (MH.LIBRARY || []).forEach(function (t) {
+      var pool = (MH.LIBRARY || []).concat((MH.LISTEN_COURSES || []).map(function (c) {
+        return { id: c.id, level: c.level, title: c.title, paras: c.script || [] };
+      }));
+      pool.forEach(function (t) {
         var o = document.createElement("option");
         o.value = t.id;
         o.textContent = t.level + " " + t.title;
@@ -447,7 +800,68 @@
         showMode(b.dataset.mode);
       });
     });
+    pane.querySelectorAll(".rd-card").forEach(function (c) {
+      c.addEventListener("click", function () { renderListenCourse(c.dataset.lc); });
+    });
     showMode("dict");
+  }
+
+  function renderListenCourse(id) {
+    var c = (MH.LISTEN_COURSES || []).find(function (x) { return x.id === id; });
+    if (!c) { toast("Listening lesson not found"); return; }
+    var pane = el("lib-pane");
+    var html = '<button class="back-btn" id="lc-back">BACK TO LISTENING</button>';
+    html += '<div class="rd-head"><span class="rd-level-chip" style="border-color:' + levelColor(c.level) + ';color:' + levelColor(c.level) + ';">' + c.level + "</span><div><div class=\"rd-title\">" + MF.esc(c.title) + "</div><div class=\"rd-tag\">Listening course</div></div></div>";
+    html += '<div class="rd-tip">Play each line of the script. Read the Korean, check the English, then answer the question at the end.</div>';
+    html += '<div id="rd-tapinfo" class="rd-tapinfo"></div>';
+    (c.script || []).forEach(function (s, i) {
+      html += '<div class="rd-para"><div class="rd-para-row">'
+        + '<button class="mini-speak" data-tts="' + MF.esc(s.ko) + '">LISTEN</button>'
+        + "</div>"
+        + '<div class="rd-ko">' + MF.tokHTML(s.ko, {}) + "</div>"
+        + '<div class="rd-en">' + MF.esc(s.en) + "</div></div>";
+    });
+    html += '<div class="ls-progress">Question</div><div class="ls-quiz-q" id="lc-q"></div><div class="ls-quiz-opts" id="lc-opts"></div>';
+    pane.innerHTML = html;
+    el("lc-back").addEventListener("click", function () { renderListenTab(el("lib-pane")); });
+    pane.querySelectorAll(".mini-speak").forEach(function (b) {
+      if (b.dataset.tts) b.addEventListener("click", function () { speak(b.dataset.tts, 0.85); });
+    });
+    pane.querySelectorAll(".rd-tok").forEach(function (sp) {
+      sp.addEventListener("click", function () { showTapWord(sp.dataset.w, {}); });
+    });
+    var q = c.q && c.q[0];
+    if (q) {
+      el("lc-q").textContent = q.q;
+      var opts = el("lc-opts");
+      q.opts.forEach(function (o, oi) {
+        var b = document.createElement("button");
+        b.className = "lesson-btn ghost ls-opt";
+        b.textContent = o;
+        b.addEventListener("click", function () {
+          var good = oi === q.a;
+          var box = el("lc-opts");
+          var fb = document.createElement("div");
+          fb.className = "feedback-banner " + (good ? "correct" : "wrong");
+          fb.innerHTML = '<div class="fb-head">' + (good ? "Correct" : "Listen once more") + "</div></div>";
+          box.appendChild(fb);
+          if (good) {
+            var gained = false;
+            if (!(state.listenDone && state.listenDone[c.id])) {
+              state.listenDone = state.listenDone || {};
+              state.listenDone[c.id] = Date.now();
+              addXp(15);
+              saveState();
+              updateTopbarStats();
+              gained = true;
+            }
+            if (gained) fb.innerHTML = '<div class="fb-head">Correct +15 XP</div>';
+          }
+          [].forEach.call(box.querySelectorAll(".ls-opt"), function (x) { x.disabled = true; });
+        });
+        opts.appendChild(b);
+      });
+    }
   }
 
   function makeDiv(klass, html) {
@@ -459,6 +873,10 @@
 
   function pickText(id, mode) {
     var t = (MH.LIBRARY || []).find(function (x) { return x.id === id; });
+    if (!t) {
+      var c = (MH.LISTEN_COURSES || []).find(function (x) { return x.id === id; });
+      if (c) t = { id: c.id, level: c.level, title: c.title, paras: c.script || [] };
+    }
     if (!t) return;
     if (mode === "dict") initDictation(t);
     else initShadowing(t);

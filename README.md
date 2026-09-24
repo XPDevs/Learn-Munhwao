@@ -6,11 +6,11 @@ The app runs fully in the browser with no account and no backend. It works offli
 
 ## What is inside
 
-- A course of 140 lessons in 20 tiers, from the alphabet to literature.
-- A landing page, a graded reading library with tap to translate, news, culture notes and a listening lab with dictation and shadowing.
-- Speaking tools: pronunciation scoring, speech recognition, practice lines and a conversation partner powered by a large offline knowledge base.
-- Reference tools: dictionary, North vs South comparison, frequency bands, example sentences, grammar encyclopedia, lesson search, flashcards, deck generator, SRS, Anki export, stroke order, handwriting canvas and an OCR scanner.
-- Study tools: roadmap from A1 to C2, study plan, achievements, analytics and printable certificates.
+- A course of 140 lessons in 20 tiers, from the alphabet to literature, with a textbook view of every unit and chapter.
+- A reading library with tap to translate and a CEFR style pathway from A1 to C1: over 2000 generated graded readers with comprehension checks, real world articles, dialogue courses, listening courses, news, novels, academic texts, culture notes and a listening lab with dictation, shadowing and quizzes.
+- Speaking tools: pronunciation scoring, speech recognition, practice lines, an offline conversation partner, advanced conversation scenarios, a composition course from A2 to C2 and writing correction.
+- Reference tools: dictionary, North vs South comparison, frequency bands, example sentences, grammar encyclopedia, lesson search, flashcards, an SM-2 style spaced repetition console, deck generator, Anki export, stroke order, handwriting canvas and an OCR scanner.
+- Study tools: CEFR roadmap with five skill gauges per level, study plan, achievements, analytics and printable certificates.
 - Data tools: export and import your backup, and push or pull it to your own sync server.
 - Community and classroom modes that run locally on your device.
 
@@ -89,6 +89,13 @@ All course content lives in plain files under the data folder. Edit any of them 
 - data/vocab.js: the core course vocabulary, keyed by short ids.
 - data/dict.js: dictionary extras, comparison pairs, frequency bands, example sentences and the grammar encyclopedia.
 - data/library.js: the graded texts, the news items with the advanced archive, novels, academic texts, the comprehension quiz bank, the culture notes, the stroke examples and the media manifest.
+- data/passages.js: the generator that produces 360 graded readers per level (2160 in total) with two comprehension questions each.
+- data/articles.js: the real world article collection across themes and levels.
+- data/listen.js: the listening course lessons with scripts and questions.
+- data/dialogues.js: the dialogue courses with role play lines and questions.
+- data/scenarios.js: the advanced conversation scenarios for B1 to C2.
+- data/composition.js: the A2 to C2 composition course with prompts, guides and model answers.
+- data/cefr.js: the CEFR style pathway with can do statements and per level skill targets.
 - data/ai.js: the offline knowledge base for the partner and the coach.
 - data/lessons.js: the 140 lessons in 20 tiers.
 - data/grammar.js, data/hangeul.js, data/placement.js: rules, the alphabet and the placement test.
@@ -102,7 +109,7 @@ The data in this app is verified with a headless browser harness that loads the 
 1. Serve the folder, for example with python -m http.server 8000.
 2. Open a Chrome install from a command line on the served site and inspect the page for errors, or keep the small _harness.html check page in the root and load it to print the pass list for data sizes, page renders and feature openings.
 
-The current build passes all checks: the dictionary, the library, the news, the culture, the media list, the frequency bands, the example sentences, the grammar encyclopedia, the speaking lines, the stroke examples, every page and every tool feature.
+The current build passes all checks: the dictionary, the library, the articles, the dialogues, the listening courses, the graded readers, the scenarios, the composition course, the CEFR roadmap, the SM-2 flashcard console, the culture, the media list, the frequency bands, the example sentences, the grammar encyclopedia, the speaking lines, the stroke examples, every page and every other tool feature.
 
 ## A note on the standard
 

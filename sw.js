@@ -1,6 +1,6 @@
 /* Munhwao Mastery - service worker: makes the app installable and fully
    offline once hosted over HTTP(S). (file:// cannot register a SW.) */
-const VERSION = "mm-v5";
+const VERSION = "mm-v6";
 const PRECACHE = [
   "index.html",
   "style.css",
@@ -15,6 +15,13 @@ const PRECACHE = [
   "data/dict.js",
   "data/library.js",
   "data/ai.js",
+  "data/passages.js",
+  "data/articles.js",
+  "data/listen.js",
+  "data/dialogues.js",
+  "data/scenarios.js",
+  "data/composition.js",
+  "data/cefr.js",
   "js/library.js",
   "js/speak.js",
   "js/tools.js",
