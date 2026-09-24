@@ -80,7 +80,7 @@
 
 <!-- ===== SPEAK PAGE ===== -->
 <main id="page-speak" class="page">
-  <div class="page-heading"><h1>Speak</h1><p>Talking practice, pronunciation scoring and the AI partner.</p></div>
+  <div class="page-heading"><h1>Speak</h1><p>Talking practice, pronunciation scoring and the offline partner.</p></div>
   <div id="speak-content"></div>
 </main>
 
@@ -124,6 +124,7 @@
 <script src="./data/placement.js"></script>
 <script src="./data/dict.js"></script>
 <script src="./data/library.js"></script>
+<script src="./data/ai.js"></script>
 <script src="./audio/manifest.js"></script><script>
 "use strict";
 const BASE_URL = "./";
@@ -158,7 +159,7 @@ const DEFAULT_STATE = {
   totalCorrect: 0,
   totalSeen: 0,
   dayXp: 0,
-  settings: { tts: true, rate: 0.85, dark: true, useAI: false, apiUrl: "", apiKey: "", model: "gpt-4o-mini" },
+  settings: { tts: true, rate: 0.85, dark: true },
   user: { name: "", avatar: 0, joined: "" },
   achievements: {},
   quests: {},
@@ -182,7 +183,7 @@ function loadState() {
     const raw = localStorage.getItem(STATE_KEY);
     if (raw) {
       const loaded = JSON.parse(raw);
-      loaded.settings = Object.assign({ tts: true, rate: 0.85, dark: true, useAI: false, apiUrl: "", apiKey: "", model: "gpt-4o-mini" }, loaded.settings || {});
+      loaded.settings = Object.assign({ tts: true, rate: 0.85, dark: true }, loaded.settings || {});
       return Object.assign({}, DEFAULT_STATE, loaded);
     }
   } catch (e) {}

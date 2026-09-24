@@ -32,7 +32,7 @@ MH.AI = {
     /* ---------- name and introduction ---------- */
     { m: "이름|what is your name|who are you|소개", r: "제 이름은 리동무입니다. 저는 당신의 Munhwao 학습 동무입니다.", en: "My name is Comrade Ri. I am your Munhwao study comrade.", tag: "name" },
     { m: "어떻게 불러|뭐라고 불러|call you", r: "리동무라고 불러 주십시오. 동무는 이름이 무엇입니까?", en: "Call me Comrade Ri. What is your name, comrade?", tag: "name" },
-    { m: "제 이름은|내 이름은|나는 ...|my name", r: "그 이름 멋있습니다. 앞으로 잘 서로 돕겠습니다.", en: "That name is fine. From now on we will help each other well.", tag: "name" },
+    { m: "제 이름은|내 이름은|my name", r: "그 이름 멋있습니다. 앞으로 잘 서로 돕겠습니다.", en: "That name is fine. From now on we will help each other well.", tag: "name" },
     { m: "동무라는|동무|comrade", r: "동무는 동지라는 뜻의 높임말 가운데 쓰임 같습니다. 우리 서로 동무로 부릅시다.", en: "Comrade is a respectful way to address a fellow person. Let us call each other comrade.", tag: "name" },
     { m: "어느 나라|국적|from where|어디 출신", r: "저는 이 학습 세계에서 태어났습니다. 동무의 나라에서는 Munhwao가 낯섭니까?", en: "I was born in this learning world. Is Munhwao new in your country?", tag: "name" },
     { m: "몇 살|나이|age|살입니까", r: "나이는 만나기 좋은 주제가 아닙니다. 우리 공부 이야기를 합시다.", en: "Age is not a comfortable topic. Let us talk about study instead.", tag: "name" },
@@ -150,7 +150,7 @@ MH.AI = {
 
     /* ---------- numbers ---------- */
     { m: "숫자|number|하나|둘|셋|일|이|삼|사|오|십", r: "숫자는 말의 흐름을 만듭니다. 하나, 둘, 셋부터 함께 세어 봅시다.", en: "Numbers shape speech flow. Let us count 하나, 둘, 셋 together.", tag: "number" },
-    { m: "륙|six alone|독립", r: "따로 쓸 때 여섯은 륙입니다. 령에서 구까지가 Munhwao의 수입니다.", en: "Six alone is 륙. 령 through 구 are the Munhwao numerals.", tag: "number" },
+    { m: "륙|6|six alone|독립", r: "따로 쓸 때 여섯은 륙입니다. 령에서 구까지가 Munhwao의 수입니다.", en: "Six alone is 륙. 령 through 구 are the Munhwao numerals.", tag: "number" },
     { m: "유월|6월|June", r: "유월은 두 표준 모두에서 쓰는 말입니다. 여섯 번째 달입니다.", en: "유월 is used in both standards for June, the sixth month.", tag: "number" },
     { m: "백|천|만|count|세다", r: "백과 천과 만이 모여 큰 수가 됩니다. 순서대로 익히면 됩니다.", en: "Hundreds, thousands and ten thousands make big numbers. Learn them in order.", tag: "number" },
     { m: "날짜|date|요일|월요일", r: "요일 이름도 재미있습니다. 일월부터 이십사일까지 차례로 붙습니다.", en: "Day names are fun too. Dates run from the first through the twenty fourth.", tag: "number" },

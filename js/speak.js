@@ -1,10 +1,11 @@
 /* =====================================================================
-   SPEAKING AND AI FEATURES  (Munhwao Mastery)
+   SPEAKING AND PARTNER FEATURES  (Munhwao Mastery)
    Pronunciation scoring with the browser speech recogniser, talking
-   practice lines, the AI conversation partner, AI writing correction
-   and the Munhwao spelling and grammar checkers. AI features work
-   offline with rule based fallbacks, and light up with an OpenAI
-   compatible key you enter in Settings.
+   practice lines, the conversation partner, writing correction and
+   the Munhwao spelling and grammar checkers. The partner and the
+   writing coach answer from the offline knowledge base in data/ai.js,
+   a big list of patterns and replies. There is no model anywhere and
+   nothing is sent to any network.
    ===================================================================== */
 (function () {
   "use strict";
@@ -133,43 +134,38 @@
   ];
   MH.SPEAK_LINES = SPEAK_LINES;
 
-  /* ---------- AI helpers ---------- */
-  function aiCfg() { return state.settings || {}; }
-  MF.aiConfigured = function () {
-    var c = aiCfg();
-    return !!(c.useAI && c.apiUrl && c.apiKey);
-  };
-  MF.aiChat = function (messages, cb) {
-    var c = aiCfg();
-    if (!MF.aiConfigured()) { cb(null, "no-config"); return; }
-    var url = String(c.apiUrl).replace(/\/+$/, "") + "/chat/completions";
-    var body = JSON.stringify({ model: c.model || "gpt-4o-mini", messages: messages, temperature: 0.7 });
-    fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + c.apiKey },
-      body: body
-    }).then(function (r) { return r.json(); }).then(function (data) {
-      var txt = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-      if (txt) cb(txt, null); else cb(null, "empty");
-    }).catch(function () { cb(null, "network"); });
-  };
-
-  /* Offline partner brain: pattern based Munhwao replies. */
-  function offlineReply(user) {
-    var u = (user || "").toLowerCase();
-    if (/안녕|반갑|hello|hi|안뇽/.test(u)) return { ko: "반갑습니다, 동무! 오늘은 어떤 말을 배웁니까?", en: "Delighted to meet you, comrade. What are we learning today?" };
-    if (/이름|name/.test(u)) return { ko: "제 이름은 리동무입니다. 당신의 이름은 무엇입니까?", en: "My name is Comrade Ri. What is your name?" };
-    if (/나이|몇 살|age/.test(u)) return { ko: "나이는 묻지 않는 것이 예절입니다. 우리는 같이 공부합시다.", en: "Asking age is not usual politeness. Let us study together." };
-    if (/학생|student|공부|공부하/.test(u)) return { ko: "공부는 즐거운 일입니다. 오늘 10분만 더 합시다.", en: "Studying is a joy. Let us do ten more minutes today." };
-    if (/감사|고맙|thanks|thank/.test(u)) return { ko: "천만에요. 우리는 서로 돕는 동무입니다.", en: "You are welcome. We are comrades who help each other." };
-    if (/날씨|weather/.test(u)) return { ko: "오늘 날씨가 좋습니다. 산책하기 참 좋은 날입니다.", en: "The weather is fine today. It is a good day for a walk." };
-    if (/먹|밥|food|배("고프|고프)/.test(u)) return { ko: "랭면 한 그릇이 어떻습니까? 차가운 국수는 여름에 아주 좋습니다.", en: "How about a bowl of cold noodles? Cold noodles are lovely in summer." };
-    if (/여행|travel|가고 싶/.test(u)) return { ko: "려행은 좋습니다. 지하철을 타고 도시를 구경해 보십시오.", en: "Travelling is good. Try riding the metro and seeing the city." };
-    if (/감사|미안|sorry/.test(u)) return { ko: "괜찮습니다. 다시 시도합시다.", en: "No problem. Let us try again." };
-    if (/배우|learn|공부|study/.test(u)) return { ko: "우리는 함께 배웁니다. 무엇부터 시작할까요?", en: "We learn together. Where shall we begin?" };
-    if (/뭐|무엇|what/.test(u)) return { ko: "그것은 좋은 질문입니다. 사전에서 찾아보십시오.", en: "That is a good question. Look it up in the dictionary." };
-    return { ko: "알겠습니다. 계속 말씀해 주십시오.", en: "Understood. Please keep talking." };
+  /* ---------- Brain helpers (offline knowledge base, not a model) ---------- */
+  function brainNorm(s) {
+    return String(s || "").toLowerCase().replace(/[^a-z0-9가-힣ㄱ-ㅎㅏ-ㅣ\s`']/g, " ").replace(/\s+/g, " ").trim();
   }
+  function fallbackReply(cat) {
+    var fb = (MH.AI && MH.AI.fallbacks) || {};
+    var list = (fb[cat]) || fb.partner || [];
+    var pick = list[Math.floor(Math.random() * list.length)] || { r: "알겠습니다. 계속 말씀해 주십시오.", en: "Understood. Please keep talking." };
+    return { ko: pick.r, en: pick.en };
+  }
+  MF.brainReply = function (text, categories) {
+    var u = brainNorm(text);
+    var cats = Array.isArray(categories) ? categories.slice() : [categories];
+    var best = null, bestScore = 0;
+    var cat, i, k;
+    for (var c = 0; c < cats.length; c++) {
+      cat = (MH.AI && MH.AI[cats[c]]) || [];
+      for (i = 0; i < cat.length; i++) {
+        var keys = String(cat[i].m || "").split("|");
+        var score = 0;
+        for (k = 0; k < keys.length; k++) {
+          var key = brainNorm(keys[k]);
+          if (!key) continue;
+          if (key === u) score += 100;
+          else if (u.indexOf(key) >= 0) score += Math.min(10, key.length) * 4;
+        }
+        if (score > bestScore) { bestScore = score; best = cat[i]; }
+      }
+    }
+    if (best && bestScore > 0) return { ko: best.r, en: best.en, tag: best.tag || "" };
+    return fallbackReply(cats[0]);
+  };
 
   /* =====================================================================
      SPEAK HUB
@@ -177,7 +173,7 @@
   window.renderSpeakHub = function () {
     var box = el("speak-content");
     box.innerHTML = '<div class="lib-tabs">'
-      + tab("practice", "Practice") + tab("pron", "Score") + tab("partner", "AI Partner") + tab("writing", "Writing") + tab("checker", "Checkers")
+      + tab("practice", "Practice") + tab("pron", "Score") + tab("partner", "Partner") + tab("writing", "Writing") + tab("checker", "Checkers")
       + "</div>" + '<div id="spk-pane"></div>';
     box.querySelectorAll(".lib-tab").forEach(function (b) {
       b.addEventListener("click", function () {
@@ -290,13 +286,12 @@
 
   /* ---------- Partner tab ---------- */
   function renderPartnerTab(pane) {
-    var html = '<div class="rd-tip">Talk with a Munhwao partner. The partner replies with a pattern brain offline, or with a real model when you add an API key in Settings.</div>'
+    var html = '<div class="rd-tip">Talk with a Munhwao partner. The partner answers from the offline knowledge base, a big list of patterns and replies. Nothing you type leaves this device.</div>'
       + '<div class="chat-box" id="chat-box"></div>'
       + '<div class="chat-input"><input type="text" class="lesson-input" id="chat-in" placeholder="Type in Munhwao or English...">'
       + '<button class="lesson-btn continue" id="chat-send">Send</button></div>';
     pane.innerHTML = html;
     var box = el("chat-box");
-    var hist = [];
     function add(role, ko, en) {
       var d = document.createElement("div");
       d.className = "chat-row " + role;
@@ -313,17 +308,8 @@
       if (!v) return;
       el("chat-in").value = "";
       add("user", v, "");
-      if (MF.aiConfigured()) {
-        hist.push({ role: "user", content: v });
-        MF.aiChat(hist.concat([{ role: "system", content: "You are a Munhwao speaking partner. Answer in short North Korean sentences in Hangul, and give the English translation in parentheses. Never use South Korean spellings." }]),
-          function (txt, err) {
-            if (txt) { add("bot", txt, ""); hist.push({ role: "assistant", content: txt }); }
-            else add("bot", "연결이 어렵습니다. 오프라인 동무가 대답합니다.", err);
-          });
-      } else {
-        var r = offlineReply(v);
-        setTimeout(function () { add("bot", r.ko, r.en); }, 400);
-      }
+      var r = MF.brainReply(v, ["partner", "facts"]);
+      setTimeout(function () { add("bot", r.ko, r.en); }, 350);
     }
     el("chat-send").addEventListener("click", send);
     el("chat-in").addEventListener("keydown", function (ev) { if (ev.key === "Enter") send(); });
@@ -331,7 +317,7 @@
 
   /* ---------- Writing tab ---------- */
   function renderWritingTab(pane) {
-    var html = '<div class="rd-tip">Write a sentence in Munhwao. With an API key in Settings the partner rewrites and explains your sentence. Offline, the app applies the Munhwao spelling rules and reports each change.</div>'
+    var html = '<div class="rd-tip">Write a sentence in Munhwao. The coach applies the Munhwao spelling rules, reports each change and adds a note from the offline knowledge base.</div>'
       + '<div class="ls-input"><textarea class="lesson-input wr-area" id="wr-area" rows="4" placeholder="여기에 문장을 적으십시오. Type a sentence here..."></textarea></div>'
       + '<div class="ls-actions"><button class="lesson-btn continue" id="wr-go">Correct and explain</button></div>'
       + '<div id="wr-out"></div>';
@@ -340,15 +326,9 @@
       var txt = el("wr-area").value.trim();
       if (!txt) return;
       var out = el("wr-out");
-      if (MF.aiConfigured()) {
-        out.innerHTML = '<span class="spk-wait">Asking the partner...</span>';
-        MF.aiChat([{ role: "system", content: "You are a Munhwao writing coach. Rewrite the user sentence into correct North Korean Munhwao in Hangul, then explain the changes in English in a few commas and full stops. Do not use South Korean spellings." }, { role: "user", content: txt }], function (txt2, err) {
-          out.innerHTML = txt2 ? '<div class="conj-card wr-result">' + MF.esc(txt2) + "</div>" : '<div style="color:var(--orange);">No answer. ' + MF.esc(err || "") + "</div>";
-        });
-        return;
-      }
       var checks = MF.munhwaoChecks(txt);
       var fixed = munhwao(txt);
+      var insight = MF.brainReply(txt, ["coach", "facts"]);
       var html = '<div class="conj-card"><div class="conj-verb">Munhwao writing check</div>';
       html += '<div class="wr-row"><b>You wrote</b><div>' + MF.esc(txt) + "</div></div>";
       html += '<div class="wr-row"><b>Munhwao form</b><div>' + MF.esc(fixed) + "</div></div>";
@@ -359,6 +339,7 @@
       } else {
         html += '<div style="color:var(--green);font-weight:800;margin-top:10px;">No South spellings found. Clean Munhwao.</div>';
       }
+      html += '<div class="wr-row" style="margin-top:12px;"><b>Coach note</b><div>' + MF.esc(insight.ko) + " " + MF.esc(insight.en) + "</div></div>";
       html += "</div>";
       out.innerHTML = html;
     });

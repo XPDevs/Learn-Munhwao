@@ -597,4 +597,41 @@
     });
     return n ? Math.round((m / Math.max(n, 1)) * 100) : 0;
   }
+
+  /* =====================================================================
+     LIVE LANDING REFRESH
+     The landing page keeps its own progress numbers fresh without a
+     reload. A small timer re-renders it whenever a relevant part of the
+     saved state changes while the page is visible, and again when the
+     tab returns to view.
+     ===================================================================== */
+  function liveSignature() {
+    try {
+      var dk = 0;
+      try { if (typeof dueReviewCount === "function") dk = dueReviewCount(); } catch (e) {}
+      var ud = state.user || {};
+      return [Object.keys(state.lessonCompletion || {}).length, state.xp, state.streak, state.dayXp,
+        Object.keys(state.wordMastery || {}).length, (state.placement || {}).tier || "tier0", ud.name || ""].join("|") + "|" + dk;
+    } catch (e) { return ""; }
+  }
+  MF.startLive = function () {
+    if (MF._liveOn) return;
+    MF._liveOn = true;
+    MF._liveSig = liveSignature();
+    setInterval(function () {
+      var pg = document.getElementById("page-home");
+      if (!pg || !pg.classList.contains("active")) return;
+      if (document.visibilityState === "hidden") return;
+      var cur = liveSignature();
+      if (cur !== MF._liveSig) {
+        MF._liveSig = cur;
+        if (typeof renderHome === "function") renderHome();
+      }
+    }, 1200);
+    document.addEventListener("visibilitychange", function () {
+      var pg = document.getElementById("page-home");
+      if (document.visibilityState === "visible" && pg && pg.classList.contains("active") && typeof renderHome === "function") renderHome();
+    });
+  };
+  MF.startLive();
 })();

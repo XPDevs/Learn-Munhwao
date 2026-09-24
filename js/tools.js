@@ -5,7 +5,7 @@
    generator, Anki export, stroke reference, handwriting canvas, OCR,
    grammar encyclopedia, bookmark and note manager, analytics,
    certificates, export and import, cloud sync, a local community board,
-   a classroom mode, and settings for the AI partner.
+   a classroom mode, and settings for your profile and speech rate.
    ===================================================================== */
 (function () {
   "use strict";
@@ -62,7 +62,7 @@
         ["class", "Classroom", "Create a class, join with a code, share a practice deck."]
       ] },
       { head: "Setup", items: [
-        ["settings", "Settings", "Name, speech rate, AI key and appearance."],
+        ["settings", "Settings", "Name, speech rate and appearance."],
         ["api", "API and contribution", "The documented data files and how to add words."]
       ] }
     ];
@@ -973,37 +973,19 @@
     var html = '<div class="lesson-prompt">Settings</div>'
       + '<div class="ls-input"><label class="set-label">Your name</label><input type="text" class="lesson-input" id="set-name" value="' + MF.esc(state.user && state.user.name || "") + '"></div>'
       + '<div class="ls-input"><label class="set-label">Speaking rate</label><input type="range" id="set-rate" min="0.5" max="1.2" step="0.05" value="' + (state.settings.rate || 0.85) + '"><span id="set-rate-v"></span></div>'
-      + '<hr class="set-hr">'
-      + '<div class="ls-input"><label class="set-label">Use the AI partner (check the box, then fill the OpenAI compatible address and key)</label>'
-      + '<input type="checkbox" id="set-ai" ' + (state.settings.useAI ? "checked" : "") + "></div>"
-      + '<div class="ls-input"><input type="text" class="lesson-input" id="set-url" placeholder="https://api.openai.com/v1" value="' + MF.esc(state.settings.apiUrl || "") + '"></div>'
-      + '<div class="ls-input"><input type="password" class="lesson-input" id="set-key" placeholder="api key" value="' + MF.esc(state.settings.apiKey || "") + '"></div>'
-      + '<div class="ls-input"><input type="text" class="lesson-input" id="set-model" placeholder="model" value="' + MF.esc(state.settings.model || "gpt-4o-mini") + '"></div>'
-      + '<hr class="set-hr">'
-      + '<div class="ls-actions"><button class="lesson-btn check" id="set-save">Save settings</button>'
-      + '<button class="lesson-btn ghost" id="set-clear">Clear the API key</button></div>'
-      + '<div class="rd-tip" style="margin-top:12px;">The key never leaves this device except to your configured address. Keep the address private and remembered only here.</div>';
+      + '<div class="ls-actions"><button class="lesson-btn check" id="set-save">Save settings</button></div>'
+      + '<div class="rd-tip" style="margin-top:12px;">Everything is stored on this device only. The partner and the coach run from the offline knowledge base, so nothing you write or say is sent anywhere.</div>';
     pane.innerHTML = html;
     function paintRate() { el("set-rate-v").textContent = " " + el("set-rate").value; }
     el("set-rate").addEventListener("input", paintRate);
     paintRate();
     el("set-save").addEventListener("click", function () {
       state.settings = Object.assign({}, state.settings, {
-        rate: parseFloat(el("set-rate").value),
-        useAI: el("set-ai").checked,
-        apiUrl: el("set-url").value.trim(),
-        apiKey: el("set-key").value.trim(),
-        model: el("set-model").value.trim() || "gpt-4o-mini"
+        rate: parseFloat(el("set-rate").value)
       });
       state.user = Object.assign({}, state.user || {}, { name: el("set-name").value.trim() });
       saveState();
       toast("Settings saved");
-    });
-    el("set-clear").addEventListener("click", function () {
-      state.settings.apiKey = "";
-      saveState();
-      el("set-key").value = "";
-      toast("API key cleared");
     });
   };
 
@@ -1017,6 +999,7 @@
       ["data/vocab.js", "Course vocabulary. Add entries as MH.VOCAB fields."],
       ["data/dict.js", "DICTIONARY extras, comparison pairs, frequency bands and example sentences."],
       ["data/library.js", "Graded texts, news, culture notes and the media manifest."],
+      ["data/ai.js", "The offline knowledge base for the partner and coach. Add as many pattern and reply pairs as you like."],
       ["data/lessons.js", "The 140 lessons and 20 tiers with their cards."],
       ["data/grammar.js", "Conjugation rules and the grammar reference."],
       ["data/hangeul.js", "The alphabet data with Munhwao letter names."],
