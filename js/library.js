@@ -92,7 +92,7 @@
     } else {
       html += '<section class="hm-banner"><div class="banner-icon">MAP</div>'
         + '<h2>' + done + " of 140 lessons complete</h2>"
-        + '<p style="color:var(--text-dim);line-height:1.6;margin-top:6px;">Keep your streak alive. Review due words and open the next lesson on the course map.</p>"
+        + '<p style="color:var(--text-dim);line-height:1.6;margin-top:6px;">Keep your streak alive. Review due words and open the next lesson on the course map.</p>'
         + '<div class="hm-meter"><div class="hm-meter-fill" style="width:' + pct + '%;"></div></div>'
         + (tier ? '<p style="color:var(--text-dim);font-size:0.85rem;margin-top:6px;">Placed at tier ' + tier + ". You can retake the test anytime." + "</p>" : "")
         + "</section>";
