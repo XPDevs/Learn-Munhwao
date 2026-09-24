@@ -1,6 +1,6 @@
 /* Munhwao Mastery - service worker: makes the app installable and fully
    offline once hosted over HTTP(S). (file:// cannot register a SW.) */
-const VERSION = "mm-v3";
+const VERSION = "mm-v4";
 const PRECACHE = [
   "index.html",
   "style.css",

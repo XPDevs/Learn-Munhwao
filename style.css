@@ -875,3 +875,97 @@ input, select, textarea { font-family: inherit; }
   .hm-cards { grid-template-columns: 1fr; }
   .hero-title br { display: inline; }
 }
+
+/* =====================================================================
+   MOBILE TUNING for the expanded pages and tools
+   ===================================================================== */
+body { -webkit-tap-highlight-color: transparent; }
+button { touch-action: manipulation; }
+.bottom-nav { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+@media (max-width: 720px) {
+  .topbar { gap: 8px; }
+  .logo { font-size: 1.02rem; }
+  .stat-chip { padding: 5px 9px; font-size: 0.78rem; }
+  .stat-chip svg { width: 14px; height: 14px; }
+  .page { padding: 0 12px calc(84px + env(safe-area-inset-bottom, 0px)); }
+  .tool-box { padding: 12px; }
+  .conj-card { padding: 14px; }
+  .hero-stats { gap: 18px; }
+  .lib-tabs { -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .lib-tabs::-webkit-scrollbar { display: none; }
+  .ls-modes { flex-wrap: wrap; }
+  .rd-ko { font-size: 1.08rem; }
+  .spk-ko { font-size: 1.18rem; }
+  .media-card { gap: 10px; }
+}
+
+@media (max-width: 480px) {
+  .topbar { padding: 8px 10px; }
+  .topbar .logo { font-size: 0.92rem; }
+  .topbar .logo-sub { font-size: 0.5rem; }
+  .topbar .stat-chip { padding: 4px 8px; font-size: 0.72rem; border-radius: 10px; }
+  .topbar .stat-chip svg { width: 12px; height: 12px; }
+  .bottom-nav button { font-size: 0.6rem; padding: 9px 0 7px; white-space: nowrap; word-break: keep-all; }
+  .bottom-nav .bn-dot { width: 14px; }
+  .page-heading h1 { font-size: 1.28rem; }
+  .page-heading p { font-size: 0.86rem; }
+  .hero { padding: 24px 0 18px; }
+  .hero-sub { font-size: 0.92rem; }
+  .hero-cta { flex-direction: column; align-items: stretch; max-width: 320px; margin-left: auto; margin-right: auto; }
+  .hero-stats { gap: 14px; margin-top: 20px; }
+  .hs-big { font-size: 1.35rem; }
+  .hm-cards { gap: 10px; }
+  .hm-card { padding: 14px; }
+  .hm-banner { padding: 16px 14px; }
+  .rd-title { font-size: 1.15rem; }
+  .rd-ko { font-size: 1rem; line-height: 1.75; }
+  .rd-en { font-size: 0.84rem; }
+  .rd-actions { flex-direction: column; align-items: stretch; }
+  .ls-actions { flex-direction: column; align-items: stretch; }
+  .ls-question { font-size: 1.22rem; }
+  .chat-box { height: 44vh; }
+  .chat-bubble { max-width: 92%; }
+  .chat-input .lesson-btn { flex-shrink: 0; }
+  .prone-word, .pron-word { font-size: 1.7rem; }
+  .spk-ko { font-size: 1.12rem; }
+  .wr-row { flex-direction: column; gap: 3px; }
+  .wr-row b { min-width: 0; font-size: 0.76rem; }
+  .wr-note { font-size: 0.85rem; }
+  .cmp-side { min-width: 72px; }
+  .cmp-note { font-size: 0.8rem; }
+  .api-row { flex-direction: column; gap: 4px; }
+  .api-file { white-space: normal; }
+  .cert-row, .note-row { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .st-current, .hw-word { font-size: 2.5rem; }
+  .st-row { flex-wrap: wrap; }
+  .hw-line { gap: 8px; }
+  .anal-big { font-size: 1.3rem; }
+  .cat-bar-name { width: 70px; font-size: 0.76rem; }
+  .rm-num { width: 54px; font-size: 0.75rem; }
+  .media-name { font-size: 0.92rem; }
+  .ls-hidden { font-size: 1rem; }
+  .tw-h { font-size: 1.3rem; }
+  .ac-row { gap: 8px; }
+  .lesson-topbar { padding: 10px 12px; }
+  .lesson-body { padding: 20px 14px 8px; }
+  .lesson-question-hangul { font-size: 2rem; }
+  .banner { flex-wrap: wrap; gap: 10px; padding: 12px; }
+  .banner-icon { width: 46px; height: 46px; font-size: 1rem; }
+  .banner-title { font-size: 0.96rem; }
+  .banner-cta { flex: 1 1 100%; margin-left: 0; }
+  .banner-cta .lesson-btn { width: 100%; }
+  .toast { bottom: calc(92px + env(safe-area-inset-bottom, 0px)); }
+}
+
+.topbar .stat-chip.hearts { display: flex; }
+
+@media (max-width: 400px) {
+  .topbar .stat-chip.hearts { display: none; }
+  .logo { font-size: 0.88rem; }
+  .hm-card-title { font-size: 0.98rem; }
+  .rd-level-head { flex-wrap: wrap; }
+  .hero-title { font-size: 1.5rem; }
+  .lib-tab { padding: 7px 12px; font-size: 0.78rem; }
+  .cmp-side { min-width: 66px; font-size: 0.9rem; }
+}
