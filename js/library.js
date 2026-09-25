@@ -907,12 +907,12 @@
         + '<div id="ls-kbd"></div></div>'
         + '<div class="ls-actions"><button class="lesson-btn continue" id="ls-check" disabled>Check</button>'
         + '<button class="lesson-btn ghost" id="ls-skip">Skip</button></div>';
-      buildKeyboard(el("ls-kbd"), { target: el("ls-in"), composed: true });
-      el("ls-in").addEventListener("input", function () {
-        var v = toHangul(el("ls-in").value);
-        if (v !== el("ls-in").value) el("ls-in").value = v;
-        el("ls-check").disabled = el("ls-in").value.trim() === "";
+      var dictationInput = el("ls-in");
+      bindHangulInput(dictationInput, function () {
+        var check = el("ls-check");
+        if (check) check.disabled = dictationInput.value.trim() === "";
       });
+      buildKeyboard(el("ls-kbd"), { target: dictationInput, composed: true });
       el("ls-play").addEventListener("click", function () { speak(s, 0.85); });
       el("ls-slow").addEventListener("click", function () { speak(s, 0.6); });
       el("ls-check").addEventListener("click", function () {

@@ -1,6 +1,6 @@
 /* Munhwao Mastery - service worker: makes the app installable and fully
    offline once hosted over HTTP(S). (file:// cannot register a SW.) */
-const VERSION = "mm-v6";
+const VERSION = "mm-v7";
 const PRECACHE = [
   "index.html",
   "style.css",
@@ -40,7 +40,7 @@ self.addEventListener("install", function (event) {
 self.addEventListener("activate", function (event) {
   event.waitUntil(
     caches.keys().then(function (keys) {
-      return Promise.all(keys.filter(function (k) { return k !== VERSION && k !== RUNTIME; })
+      return Promise.all(keys.filter(function (k) { return k !== VERSION; })
         .map(function (k) { return caches.delete(k); }));
     }).then(function () { self.clients.claim(); })
   );

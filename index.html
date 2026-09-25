@@ -368,7 +368,97 @@ function makeSpeaker(text, size) {
 /* ---------- Virtual Hangul keyboard (Dubeolsik) ---------- */
 let kbdTarget = null;          // input/textarea element that receives jamo
 let kbdOnKey = null;           // optional callback(ch)
-let kbdComposed = false;       // show composed result instead of raw jamo
+const hangulInputStates = new WeakMap();
+
+function notifyHangulInput(state) {
+  if (typeof state.onChange === "function") state.onChange();
+}
+
+function renderHangulInput(state, dispatchInput) {
+  const input = state.input;
+  const value = MH.compose(Array.from(state.raw));
+  state.rendered = value;
+  state.internal = true;
+  try {
+    input.value = value;
+    try { input.setSelectionRange(value.length, value.length); } catch (e) {}
+    if (dispatchInput) input.dispatchEvent(new Event("input", { bubbles: true }));
+  } finally {
+    state.internal = false;
+  }
+  notifyHangulInput(state);
+}
+
+function getHangulInputState(input) {
+  let state = hangulInputStates.get(input);
+  if (!state) {
+    state = {
+      input: input,
+      raw: input.value,
+      rendered: input.value,
+      composing: false,
+      internal: false,
+      bound: false,
+      onChange: null,
+      selectionStart: input.selectionStart,
+      selectionEnd: input.selectionEnd
+    };
+    hangulInputStates.set(input, state);
+  }
+  return state;
+}
+
+function isJamoText(text) {
+  const chars = Array.from(String(text || ""));
+  return chars.length > 0 && chars.every(function (ch) {
+    return MH.CHO_INDEX[ch] !== undefined || MH.JUNG_INDEX[ch] !== undefined;
+  });
+}
+
+function bindHangulInput(input, onChange) {
+  const state = getHangulInputState(input);
+  state.onChange = onChange || null;
+  if (state.bound) return state;
+  state.bound = true;
+
+  input.addEventListener("compositionstart", function () {
+    state.composing = true;
+  });
+
+  input.addEventListener("beforeinput", function () {
+    if (state.internal) return;
+    state.selectionStart = input.selectionStart;
+    state.selectionEnd = input.selectionEnd;
+  });
+
+  input.addEventListener("input", function (ev) {
+    if (state.internal) return;
+    if (state.composing || ev.isComposing) {
+      state.rendered = input.value;
+      notifyHangulInput(state);
+      return;
+    }
+
+    const appendedAtEnd = state.selectionStart === state.rendered.length
+      && state.selectionEnd === state.rendered.length;
+    if (ev.inputType === "insertText" && isJamoText(ev.data) && appendedAtEnd) {
+      state.raw += ev.data;
+      renderHangulInput(state, false);
+      return;
+    }
+
+    state.raw = input.value;
+    renderHangulInput(state, false);
+  });
+
+  input.addEventListener("compositionend", function () {
+    state.composing = false;
+    state.raw = input.value;
+    renderHangulInput(state, false);
+  });
+
+  return state;
+}
 
 function kbdKeyLabel(k) {
   const map = { "ㅂ":"ㅂ b/p","ㅈ":"ㅈ j","ㄷ":"ㄷ d","ㄱ":"ㄱ g","ㅅ":"ㅅ s","ㅁ":"ㅁ m","ㄴ":"ㄴ n",
@@ -382,9 +472,9 @@ function buildKeyboard(container, opts) {
   opts = opts || {};
   kbdTarget = opts.target || null;
   kbdOnKey = opts.onKey || null;
-  kbdComposed = !!opts.composed;
+  if (kbdTarget) getHangulInputState(kbdTarget);
   const rows = MH.KEYBOARD_ROWS;
-  let html = '<div class="kbd" id="kbd">';
+  let html = '<div class="kbd">';
   rows.forEach(function (row, ri) {
     html += '<div class="kbd-row">';
     if (ri === 0) html += '<button type="button" class="kbd-key special" data-act="shift">&nbsp;</button>';
@@ -399,7 +489,7 @@ function buildKeyboard(container, opts) {
   html += '</div>';
   container.insertAdjacentHTML("beforeend", html);
 
-  const kbd = document.getElementById("kbd");
+  const kbd = container.querySelector(".kbd");
   kbd.addEventListener("click", function (ev) {
     const btn = ev.target.closest("button.kbd-key");
     if (!btn) return;
@@ -435,13 +525,13 @@ function jamoBackspace() {
   const t = kbdTarget;
   if (t && document.activeElement !== t) return;
   if (t) {
-    const v = t.value;
-    if (v.slice(-1) === " ") { t.value = v.slice(0, -1); }
-    else {
-      // remove last composed syllable if present, else last char
-      t.value = v.slice(0, -1);
-    }
-    t.dispatchEvent(new Event("input"));
+    const state = getHangulInputState(t);
+    if (t.value !== state.rendered) state.raw = t.value;
+    const chars = Array.from(state.raw);
+    chars.pop();
+    state.raw = chars.join("");
+    renderHangulInput(state, true);
+    t.focus();
   } else if (kbdOnKey) kbdOnKey("\u232B");
 }
 
@@ -449,13 +539,19 @@ function insertJamo(ch) {
   if (kbdOnKey) { kbdOnKey(ch); return; }
   const t = kbdTarget;
   if (!t) return;
+
+  const state = getHangulInputState(t);
+  if (t.value !== state.rendered || state.composing) state.raw = t.value;
   const start = t.selectionStart == null ? t.value.length : t.selectionStart;
   const end = t.selectionEnd == null ? start : t.selectionEnd;
-  if (ch === "") { t.value = ""; }
-  else { t.value = t.value.slice(0, start) + ch + t.value.slice(end); }
-  const pos = (ch === "" ? 0 : start + (ch === " " ? 1 : 1)) + (ch === " " ? 0 : 0);
-  t.setSelectionRange(pos, pos);
-  t.dispatchEvent(new Event("input"));
+  if (ch === "") {
+    state.raw = "";
+  } else if (start === state.rendered.length && end === state.rendered.length) {
+    state.raw += ch;
+  } else {
+    state.raw = state.rendered.slice(0, start) + ch + state.rendered.slice(end);
+  }
+  renderHangulInput(state, true);
   t.focus();
 }
 
@@ -1215,12 +1311,11 @@ function renderTypeInput(ex) {
   const inp = el("type-input");
   const kbdBox = el("type-kbd");
   kbdBox.innerHTML = "";
-  buildKeyboard(kbdBox, { target: inp, composed: true });
-  inp.addEventListener("input", function () {
-    const v = toHangul(inp.value);
-    if (v !== inp.value) { inp.value = v; }
-    el("check-btn").disabled = inp.value.trim() === "";
+  bindHangulInput(inp, function () {
+    const check = el("check-btn");
+    if (check) check.disabled = inp.value.trim() === "";
   });
+  buildKeyboard(kbdBox, { target: inp, composed: true });
   if (ex.speak) { setTimeout(function () { speak(ex.speak); }, 150); }
   setFooter('<button class="lesson-btn check" id="check-btn" disabled>Check</button>');
   el("check-btn").addEventListener("click", function () { checkCurrent(); });
@@ -1717,17 +1812,13 @@ function renderHangulTool() {
   pane.innerHTML = html;
   const inp = el("hu-input");
   const kbdBox = el("hu-kbd");
-  buildKeyboard(kbdBox, { target: inp, composed: true });
-  inp.addEventListener("input", function () {
-    const v = toHangul(inp.value);
-    if (v !== inp.value) inp.value = v;
-    el("hu-out").textContent = v;
+  bindHangulInput(inp, function () {
+    el("hu-out").textContent = inp.value;
   });
+  buildKeyboard(kbdBox, { target: inp, composed: true });
   pane.querySelectorAll(".jamo").forEach(function (b) {
     b.addEventListener("click", function () {
-      const v = toHangul(inp.value + b.dataset.j);
-      inp.value = v;
-      el("hu-out").textContent = v;
+      insertJamo(b.dataset.j);
       if (ttsSupported() && speechSynthesis.cancel) { try { speechSynthesis.cancel(); } catch (e) {} }
       speak(b.dataset.j);
     });
@@ -1745,11 +1836,8 @@ function renderWritingTool() {
     + '<div class="conj-card" id="w-target"></div>';
   const inp = el("w-input");
   const kbdBox = el("w-kbd");
+  bindHangulInput(inp);
   buildKeyboard(kbdBox, { target: inp, composed: true });
-  inp.addEventListener("input", function () {
-    const v = toHangul(inp.value);
-    if (v !== inp.value) inp.value = v;
-  });
   let target = null;
   function newWord() {
     target = MH.vocab(pick(keys));
@@ -1851,7 +1939,8 @@ window.addEventListener("keydown", function (ev) {
     const opts = document.querySelectorAll("#modal-body .lesson-option");
     const n = parseInt(ev.key, 10);
     if (!isNaN(n) && n >= 1 && n <= opts.length) opts[n - 1].click();
-  } else if (body.querySelector("#type-input") && ev.key === "Enter") {
+  } else if (body.querySelector("#type-input") && ev.key === "Enter"
+    && !ev.isComposing && ev.keyCode !== 229) {
     const c = el("check-btn");
     if (c && !c.disabled) c.click();
   }

@@ -154,7 +154,12 @@ MH.compose = function (chars) {
   var out = "";
   var cho = null, jung = null, jong = null;
   var flush = function () {
-    if (cho || jung) {
+    if (cho && !jung) {
+      // Keep a leading consonant as jamo until its vowel arrives. Turning it
+      // into a eu-vowel placeholder here loses the information needed to
+      // compose the next key (for example ㅁ -> ㅓ -> ㄱ must become 먹).
+      out += cho;
+    } else if (cho || jung) {
       out += MH.COMBINE(cho || "ㅇ", jung || "ㅡ", jong);
     }
     cho = null; jung = null; jong = null;
@@ -214,15 +219,11 @@ MH.decompose = function (word) {
   });
 };
 
-/* Normalise typed input: if user pasted pre-composed Hangul, keep it;
-   if pasted jamo separated, compose it. Also trims spaces. */
+/* Normalise typed input: compose raw jamo while leaving precomposed Hangul,
+   spaces, Latin text, and punctuation untouched. */
 MH.normaliseInput = function (s) {
   var n = s.normalize ? s.normalize("NFC") : s;
-  if (n === s && MH.looksUncomposed(n)) {
-    var jamoChars = Array.from(n).filter(function (c) { return MH.CHO_INDEX[c] !== undefined || MH.JUNG_INDEX[c] !== undefined || c === " "; });
-    if (jamoChars.length === Array.from(n).length) return MH.compose(jamoChars);
-  }
-  return n.trim();
+  return MH.compose(Array.from(n)).trim();
 };
 MH.looksUncomposed = function (s) {
   var any = false;
