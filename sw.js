@@ -25,7 +25,6 @@ const PRECACHE = [
   "js/library.js",
   "js/speak.js",
   "js/tools.js",
-  "audio/manifest.js"
 ];
 const RUNTIME = "mm-runtime";
 

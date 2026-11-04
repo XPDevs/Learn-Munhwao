@@ -114,3 +114,22 @@ The current build passes all checks: the dictionary, the library, the articles, 
 ## A note on the standard
 
 Munhwao keeps initial r and n sounds, keeps the r sound in 랭면 and 려행, uses 륙 for the number six alone, uses 유월 in speech for June in both standards, and names the letters 기윽, 디읃 and 시읗. The course teaches these. Numbers use the Northern readings: 랭, 륙, 칠, 령 for zero.
+## 30-tier curriculum roadmap
+
+Learn-Munhwao is being expanded towards a 30-tier curriculum
+covering beginner through advanced language learning.
+
+The expansion adds:
+
+- `data/advanced-curriculum.js`
+- `docs/COURSE-ROADMAP.md`
+- `docs/SOURCES.md`
+- `docs/QUALITY-CONTROL.md`
+
+The additional lessons are structured drafts and require
+individual linguistic verification before public release.
+
+See `docs/SOURCES.md` and `docs/QUALITY-CONTROL.md`.
+
+Bundled audio has been removed. This does not establish
+authentic North Korean listening proficiency.
